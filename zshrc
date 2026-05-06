@@ -31,6 +31,13 @@ export PATH="$HOME/bin:$PATH"
 # Create a file: touch FILENAME
 # create directory (aka folder): mkdir DIRECTORY NAME 
 # Delete shit file or folder: rm -r FOLDER_OR_FILENAME
+#
+# rename file locally & in git: git mv old-name.txt new-name.txt
+#
+#
+#
+#
+#
 # ========================================
 
 
@@ -135,3 +142,59 @@ gnew() {
   # Push your local main branch to GitHub and set upstream tracking
   git push -u origin main
 }
+
+
+# Renames a tracked file or folder with git mv, auto-detects whether it is a file or folder,
+# creates a matching commit message, then commits and pushes the change to GitHub.
+grename() {
+  # Require exactly 2 arguments: the current path and the new path
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: g <old-path> <new-path>"
+    return 1
+  fi
+
+  # Save the two arguments into readable variable names
+  local old="$1"
+  local new="$2"
+  local oldbase newbase kind msg
+
+  # Stop if the original file or folder does not exist
+  if [ ! -e "$old" ]; then
+    echo "Source not found: $old"
+    return 1
+  fi
+
+  # Stop if Git is not tracking this path
+  if ! git ls-files --error-unmatch "$old" >/dev/null 2>&1; then
+    echo "Git is not tracking: $old"
+    echo "Run: git add \"$old\" && git commit -m \"Track $old\""
+    return 1
+  fi
+
+  # Detect whether the source is a folder or a file
+  if [ -d "$old" ]; then
+    kind="folder"
+  else
+    kind="file"
+  fi
+
+  # Grab just the last part of each path for a clean commit message
+  oldbase=$(basename "$old")
+  newbase=$(basename "$new")
+
+  # Rename it through Git so the change is tracked properly
+  git mv "$old" "$new" || return 1
+
+  # Build the commit message automatically
+  if [ "$kind" = "folder" ]; then
+    msg="Rename folder $oldbase to $newbase"
+  else
+    msg="Rename file $oldbase to $newbase"
+  fi
+
+  # Commit and push the rename
+  git commit -m "$msg"
+  git push
+}
+
+
