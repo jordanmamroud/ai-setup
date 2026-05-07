@@ -41,6 +41,11 @@ export PATH="$HOME/bin:$PATH"
 # ========================================
 
 
+# ========================================
+# commands for working on .ZSHRC file
+# ========================================
+
+
 #opens .zshrc file in text edit
 alias zopen="open -a TextEdit ~/.zshrc"
 
@@ -59,8 +64,28 @@ zsync() {
   git push
 }
 
+# ========================================
+# commands for working vs code
+# ========================================
+
+# Opens VS Code by itself if no repo name is given.
+# If you pass a folder name, it opens that folder inside /Users/jordanmamroud/github.
+vopen() {
+  local repo_name="$1"
+  local base_dir="/Users/jordanmamroud/github"
+
+  if [[ -z "$repo_name" ]]; then
+    code
+  else
+    code "$base_dir/$repo_name"
+  fi
+}
 
 
+
+# ========================================
+# commands for working working with github
+# ========================================
 
 # Adds only changed files, commits, and pushes.
 # Usage: gp "commit message"
