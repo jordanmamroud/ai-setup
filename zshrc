@@ -2,9 +2,9 @@ export PATH="$HOME/bin:$PATH"
 
 
 # ========================================
-# ZSHRC QUICK REFERENCE
+# ZSHRC QUICK REFERENCE (in my GitHub too.)
 # ========================================
-# Reload this file after changes:
+# Reload this file after change:
 #   source ~/.zshrc
 # OR restart shell completely:
 #   exec zsh
@@ -41,6 +41,23 @@ export PATH="$HOME/bin:$PATH"
 # ========================================
 
 
+#opens .zshrc file in text edit
+alias zopen="open -a TextEdit ~/.zshrc"
+
+
+# Copies your live ~/.zshrc into your GitHub backup file, then stages,
+# commits, and pushes that updated file to the ai-setup repo.
+zsync() {
+  local target="/Users/jordanmamroud/github/ai-setup/zshrc"
+  local repo="/Users/jordanmamroud/github/ai-setup"
+  local message="${1:-Update zshrc}"
+
+  cp ~/.zshrc "$target" &&
+  cd "$repo" &&
+  git add zshrc &&
+  git commit -m "$message" &&
+  git push
+}
 
 
 
