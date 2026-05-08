@@ -37,7 +37,7 @@ export PATH="$HOME/bin:$PATH"
 #
 #
 #
-#
+# claude --resume 1297d13d-d486-4e72-b7da-8fa70c092ef0
 # ========================================
 
 
@@ -50,11 +50,13 @@ export PATH="$HOME/bin:$PATH"
 alias zopen="open -a TextEdit ~/.zshrc"
 
 
+
+
 # Copies your live ~/.zshrc into your GitHub backup file, then stages,
 # commits, and pushes that updated file to the ai-setup repo.
 zsync() {
-  local target="/Users/jordanmamroud/github/ai-setup/zshrc"
-  local repo="/Users/jordanmamroud/github/ai-setup"
+  local target="/Users/jordanmamroud/myghub/ai-setup/zshrc"
+  local repo="/Users/jordanmamroud/myghub/ai-setup"
   local message="${1:-Update zshrc}"
 
   cp ~/.zshrc "$target" &&
@@ -63,16 +65,19 @@ zsync() {
   git commit -m "$message" &&
   git push
 }
+# common files to open
+alias zopen="open -a TextEdit ~/.zshrc"
+
 
 # ========================================
 # commands for working vs code
 # ========================================
 
 # Opens VS Code by itself if no repo name is given.
-# If you pass a folder name, it opens that folder inside /Users/jordanmamroud/github.
+# If you pass a folder name, it opens that folder inside /Users/jordanmamroud/myghub.
 vopen() {
   local repo_name="$1"
-  local base_dir="/Users/jordanmamroud/github"
+  local base_dir="/Users/jordanmamroud/myghub"
 
   if [[ -z "$repo_name" ]]; then
     code
@@ -240,3 +245,13 @@ grename() {
 }
 
 
+
+# Created by `pipx` on 2026-05-08 09:00:39
+export PATH="$PATH:/Users/jordanmamroud/.local/bin"
+
+
+# Claude launchers — myquickie is the default scratchpad/navigator,
+# myghub is the explicit "this is a real project" entry point.
+alias cquickie='cd ~/myquickie && claude'
+alias cq='cd ~/myquickie && claude'
+alias chub='cd ~/myghub && claude'
