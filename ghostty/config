@@ -1,0 +1,20 @@
+# Font
+font-family = JetBrains Mono
+font-size = 14
+
+# Theme — locked to dark
+theme = Catppuccin Mocha
+
+# Padding around terminal content
+window-padding-x = 10
+window-padding-y = 10
+
+# Background opacity (0.0 = fully transparent, 1.0 = opaque)
+background-opacity = 0.95
+
+# Scrollback limit size
+scrollback-limit = 1100000000
+
+
+# makes command G equalize windows
+keybind = super+g=equalize_splits
