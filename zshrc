@@ -1,5 +1,5 @@
 export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/mylab/ai-setup/agent-tuning/bin:$HOME/mylab/ai-setup/agent-tuning/bin/aliases:$PATH"
+export PATH="$HOME/mylab/ai-setup/myshortcuts-shell/bin:$HOME/mylab/ai-setup/myshortcuts-shell/bin/aliases:$PATH"
 
 
 # ========================================
@@ -10,7 +10,7 @@ export PATH="$HOME/mylab/ai-setup/agent-tuning/bin:$HOME/mylab/ai-setup/agent-tu
 # OR restart shell completely:
 #   exec zsh
 #
-# Git shortcuts (now in agent-tuning/bin — run `mycmds` for the full list):
+# Git shortcuts (now in myshortcuts-shell/bin — run `mycmds` for the full list):
 #   gp "commit message"              - add all, commit, push
 #   gdf "folder-name" "message"      - delete folder/file, commit, push
 #   gnew "repo-name" ["message"]       - init, add all, commit, create repo, push
@@ -48,11 +48,34 @@ export PATH="$PATH:/Users/jordanmamroud/.local/bin"
 
 # Claude launchers — quickies is the default scratchpad/navigator,
 # main is the explicit "this is a real project" entry point.
-# These stay as aliases (not scripts in agent-tuning/bin) because they cd the
+# These stay as aliases (not scripts in myshortcuts-shell/bin) because they cd the
 # current shell — a subshell script's cd would evaporate on exit.
 alias cquickie='cd ~/mylab/quickies && claude'
 alias cq='cd ~/mylab/quickies && claude'
 alias chub='cd ~/mylab/main && claude'
+
+
+# Reloads ~/.zshrc into the current shell. Must be a function/alias (not a
+# script) because `source` only affects the shell that runs it.
+alias refresh='source ~/.zshrc && echo "↻ zshrc reloaded"'
+
+
+# Wraps the `clone` script (in myshortcuts-shell/bin) so the shell cds into
+# the new repo after cloning. The bare script (used from Claude `!`) just
+# clones; this function adds the cd that only an interactive shell can do.
+clone() {
+  if [ -z "${1:-}" ]; then
+    command clone   # delegate to script for usage message
+    return 1
+  fi
+  local url="$1"
+  url="${url%%/tree/*}"   # strip GitHub web subfolder paths
+  url="${url%%/blob/*}"
+  url="${url%/}"
+  [[ "$url" != *.git ]] && url="${url}.git"
+  local repo_name="${url:t:r}"   # zsh: last path segment, drop .git
+  command clone "$1" && cd "$repo_name"
+}
 
 
 # ========================================
