@@ -1,4 +1,5 @@
 export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/mylab/ai-setup/agent-tuning/bin:$HOME/mylab/ai-setup/agent-tuning/bin/aliases:$PATH"
 
 
 # ========================================
@@ -9,13 +10,13 @@ export PATH="$HOME/bin:$PATH"
 # OR restart shell completely:
 #   exec zsh
 #
-# Git Functions (defined below):
+# Git shortcuts (now in agent-tuning/bin — run `mycmds` for the full list):
 #   gp "commit message"              - add all, commit, push
 #   gdf "folder-name" "message"      - delete folder/file, commit, push
 #   gnew "repo-name" ["message"]       - init, add all, commit, create repo, push
 #
 # ones I use a lot
-# 	gh repo create 
+# 	gh repo create
 #
 # Common Git Shortcuts:
 #   gs    - git status
@@ -24,12 +25,12 @@ export PATH="$HOME/bin:$PATH"
 #   gl    - git log --oneline --graph
 #   gco   - git checkout
 #   gb    - git branch
-# 
+#
 #
 #
 # Common terminal commands
 # Create a file: touch FILENAME
-# create directory (aka folder): mkdir DIRECTORY NAME 
+# create directory (aka folder): mkdir DIRECTORY NAME
 # Delete shit file or folder: rm -r FOLDER_OR_FILENAME
 #
 # rename file locally & in git: git mv old-name.txt new-name.txt
@@ -37,221 +38,74 @@ export PATH="$HOME/bin:$PATH"
 #
 #
 #
-# claude --resume 1297d13d-d486-4e72-b7da-8fa70c092ef0
+#
 # ========================================
-
-
-# ========================================
-# commands for working on .ZSHRC file
-# ========================================
-
-
-#opens .zshrc file in text edit
-alias zopen="open -a TextEdit ~/.zshrc"
-
-
-
-
-# Copies your live ~/.zshrc into your GitHub backup file, then stages,
-# commits, and pushes that updated file to the ai-setup repo.
-zsync() {
-  local target="/Users/jordanmamroud/myghub/ai-setup/zshrc"
-  local repo="/Users/jordanmamroud/myghub/ai-setup"
-  local message="${1:-Update zshrc}"
-
-  cp ~/.zshrc "$target" &&
-  cd "$repo" &&
-  git add zshrc &&
-  git commit -m "$message" &&
-  git push
-}
-# common files to open
-alias zopen="open -a TextEdit ~/.zshrc"
-
-
-# ========================================
-# commands for working vs code
-# ========================================
-
-# Opens VS Code by itself if no repo name is given.
-# If you pass a folder name, it opens that folder inside /Users/jordanmamroud/myghub.
-vopen() {
-  local repo_name="$1"
-  local base_dir="/Users/jordanmamroud/myghub"
-
-  if [[ -z "$repo_name" ]]; then
-    code
-  else
-    code "$base_dir/$repo_name"
-  fi
-}
-
-
-
-# ========================================
-# commands for working working with github
-# ========================================
-
-# Adds only changed files, commits, and pushes.
-# Usage: gp "commit message"
-gp() {
-  if [ -z "$1" ]; then
-    echo 'Usage: gp "commit message"'
-    return 1
-  fi
-
-  if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    echo "Not inside a git repository."
-    return 1
-  fi
-
-  if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
-    echo "No changed files to commit."
-    return 0
-  fi
-
-  echo "Changed files:"
-  git status --short
-
-  git add -A
-
-  if git diff --cached --quiet; then
-    echo "No staged changes to commit."
-    return 0
-  fi
-
-  git commit -m "$1" && git push
-}
-
-
-
-#adds all files commits and pushes to git.
-gpa() {
-  git add . && git commit -m "$1" && git push
-}
-
-# Deletes folder from git, commits and pushes. Commit msg optional. ex:gdf subfolder-name "Removed subfolder-name"
-gdf() {
-  if [ -z "$1" ]; then
-    echo 'Usage: gdf <file-or-folder> [commit-message]'
-    echo 'Example: gdf "My Folder" "Removed old folder"'
-    return 1
-  fi
-
-  git rm -r "$1" || return 1
-
-  if [ -n "$2" ]; then
-    git commit -m "$2" && git push
-  else
-    git commit && git push
-  fi
-}
-
-
-# Creates a new local git repo, creates the matching GitHub repo, connects them, and pushes main
-gnew() {
-  # Stop and show help if no repo name was provided
-  if [ -z "$1" ]; then
-    echo 'Usage: gnew <repo-name> [commit-message]'
-    echo 'Example: gnew my-new-repo "Initial commit"'
-    return 1
-  fi
-
-  # Save the repo name from the first argument
-  local repo_name="$1"
-
-  # Build the GitHub URL automatically using your username
-  local repo_url="https://github.com/jordanmamroud/$repo_name.git"
-
-  # Initialize git in the current folder
-  git init || return 1
-
-  # Rename the current branch to main
-  git branch -M main || return 1
-
-  # Stage all files in the current folder
-  git add .
-
-  # Only create a commit if there are staged changes
-  # This avoids failing with "nothing to commit, working tree clean"
-  if ! git diff --cached --quiet; then
-    git commit -m "${2:-Initial commit}" || return 1
-  fi
-
-  # Create the repo on GitHub
-  # This only creates the remote repo; it does not always safely replace an existing origin
-  gh repo create "$repo_name" --public || return 1
-
-  # If origin already exists, update it to the new repo URL
-  # If origin does not exist yet, add it
-  git remote set-url origin "$repo_url" 2>/dev/null || git remote add origin "$repo_url"
-
-  # Push your local main branch to GitHub and set upstream tracking
-  git push -u origin main
-}
-
-
-# Renames a tracked file or folder with git mv, auto-detects whether it is a file or folder,
-# creates a matching commit message, then commits and pushes the change to GitHub.
-grename() {
-  # Require exactly 2 arguments: the current path and the new path
-  if [ "$#" -ne 2 ]; then
-    echo "Usage: g <old-path> <new-path>"
-    return 1
-  fi
-
-  # Save the two arguments into readable variable names
-  local old="$1"
-  local new="$2"
-  local oldbase newbase kind msg
-
-  # Stop if the original file or folder does not exist
-  if [ ! -e "$old" ]; then
-    echo "Source not found: $old"
-    return 1
-  fi
-
-  # Stop if Git is not tracking this path
-  if ! git ls-files --error-unmatch "$old" >/dev/null 2>&1; then
-    echo "Git is not tracking: $old"
-    echo "Run: git add \"$old\" && git commit -m \"Track $old\""
-    return 1
-  fi
-
-  # Detect whether the source is a folder or a file
-  if [ -d "$old" ]; then
-    kind="folder"
-  else
-    kind="file"
-  fi
-
-  # Grab just the last part of each path for a clean commit message
-  oldbase=$(basename "$old")
-  newbase=$(basename "$new")
-
-  # Rename it through Git so the change is tracked properly
-  git mv "$old" "$new" || return 1
-
-  # Build the commit message automatically
-  if [ "$kind" = "folder" ]; then
-    msg="Rename folder $oldbase to $newbase"
-  else
-    msg="Rename file $oldbase to $newbase"
-  fi
-
-  # Commit and push the rename
-  git commit -m "$msg"
-  git push
-}
-
 
 
 # Created by `pipx` on 2026-05-08 09:00:39
 export PATH="$PATH:/Users/jordanmamroud/.local/bin"
 
 
-# Claude launchers — myquickie is the default scratchpad/navigator,
-# myghub is the explicit "this is a real project" entry point.
-alias cquickie='cd ~/myquickie && claude'
-alias cq='cd ~/myquickie && claude'
-alias chub='cd ~/myghub && claude'
+# Claude launchers — quickies is the default scratchpad/navigator,
+# main is the explicit "this is a real project" entry point.
+# These stay as aliases (not scripts in agent-tuning/bin) because they cd the
+# current shell — a subshell script's cd would evaporate on exit.
+alias cquickie='cd ~/mylab/quickies && claude'
+alias cq='cd ~/mylab/quickies && claude'
+alias chub='cd ~/mylab/main && claude'
+
+
+# ========================================
+# Per-project prompt color
+# ========================================
+# Colors the cwd segment of the prompt by which ~/mylab/<workspace>/<project> you're in.
+# Color auto-hashes from the project name (stable: same project always gets the same color).
+# Override map below reserves specific colors for specific projects.
+autoload -Uz add-zsh-hook
+setopt prompt_subst
+
+typeset -g _PROJECT_PROMPT='%1~'
+
+_set_project_prompt() {
+  local mylab=$HOME/mylab
+  case $PWD in
+    $mylab|$mylab/*) ;;
+    *) _PROJECT_PROMPT='%1~'; return ;;
+  esac
+
+  local rest=${PWD#$mylab/}
+  [[ -z $rest || $rest == $PWD ]] && { _PROJECT_PROMPT='%1~'; return; }
+
+  local first=${rest%%/*} project=""
+  case $first in
+    main|quickies|studying)
+      local after=${rest#$first/}
+      if [[ -n $after && $after != $rest ]]; then
+        project=${after%%/*}
+      else
+        project=$first
+      fi
+      ;;
+    *) project=$first ;;
+  esac
+
+  local color=""
+  case $project in
+    mygeorge) color="#cba6f7" ;;   # reserved: mauve
+  esac
+
+  if [[ -z $color ]]; then
+    local -a palette=("#89b4fa" "#a6e3a1" "#fab387" "#f5c2e7" "#94e2d5" "#b4befe" "#f9e2af" "#74c7ec")
+    local sum=0 i ch
+    for (( i=1; i<=${#project}; i++ )); do
+      ch=${project[i]}
+      sum=$(( sum + #ch ))
+    done
+    color=${palette[$(( sum % ${#palette[@]} + 1 ))]}
+  fi
+
+  _PROJECT_PROMPT="%F{$color}%1~%f"
+}
+add-zsh-hook precmd _set_project_prompt
+
+PROMPT='%n@%m ${_PROJECT_PROMPT} %# '
