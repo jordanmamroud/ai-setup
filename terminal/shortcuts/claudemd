@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+files=()
+dir="$(pwd)"
+
+while true; do
+  for name in CLAUDE.md CLAUDE.local.md .claude/CLAUDE.md .claude/CLAUDE.local.md; do
+    [[ -f "$dir/$name" ]] && files+=("$dir/$name")
+  done
+  parent="$(dirname "$dir")"
+  [[ "$parent" == "$dir" ]] && break
+  dir="$parent"
+done
+
+for candidate in "$HOME/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.local.md"; do
+  [[ -f "$candidate" ]] || continue
+  found=0
+  if [[ ${#files[@]} -gt 0 ]]; then
+    for existing in "${files[@]}"; do
+      [[ "$existing" == "$candidate" ]] && found=1 && break
+    done
+  fi
+  [[ $found -eq 0 ]] && files+=("$candidate")
+done
+
+if [[ ${#files[@]} -eq 0 ]]; then
+  echo "No CLAUDE.md files affect $(pwd)."
+  exit 0
+fi
+
+echo "Opening ${#files[@]} CLAUDE.md file(s):"
+for f in "${files[@]}"; do
+  echo "  $f"
+done
+
+code "${files[@]}"

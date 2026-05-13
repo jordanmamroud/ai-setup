@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Adds all files, commits, and pushes to git.
+# Usage: gpa "commit message"
+
+git add . && git commit -m "$1" && git push

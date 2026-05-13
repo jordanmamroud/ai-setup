@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Deletes folder/file from git, commits and pushes. Commit msg optional.
+# Usage: gdf <file-or-folder> [commit-message]
+# Example: gdf "My Folder" "Removed old folder"
+
+if [ -z "${1:-}" ]; then
+  echo 'Usage: gdf <file-or-folder> [commit-message]'
+  echo 'Example: gdf "My Folder" "Removed old folder"'
+  exit 1
+fi
+
+git rm -r "$1" || exit 1
+
+if [ -n "${2:-}" ]; then
+  git commit -m "$2" && git push
+else
+  git commit && git push
+fi

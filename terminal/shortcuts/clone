@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Clones a repo into the current directory. Auto-appends .git if missing.
+# Usage: clone <url>
+# Example: clone https://github.com/user/repo
+#          clone git@github.com:user/repo
+
+if [ -z "${1:-}" ]; then
+  echo 'Usage: clone <url>'
+  echo 'Example: clone https://github.com/user/repo'
+  echo '(.git is auto-appended if missing.)'
+  exit 1
+fi
+
+url="$1"
+
+# If user pasted a GitHub web URL pointing into a subfolder or file
+# (e.g. .../tree/main/path or .../blob/main/path), strip back to the repo.
+if [[ "$url" == *"/tree/"* || "$url" == *"/blob/"* ]]; then
+  echo "Note: that's a GitHub web URL into a subfolder; cloning the parent repo."
+fi
+url="${url%%/tree/*}"
+url="${url%%/blob/*}"
+
+url="${url%/}"  # strip trailing slash
+[[ "$url" != *.git ]] && url="${url}.git"
+
+git clone "$url"

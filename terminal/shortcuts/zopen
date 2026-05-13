@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Opens ~/.zshrc in TextEdit. The top of that file has my quick-reference
+# cheat sheet (git shortcuts, common terminal commands, etc.).
+open -a TextEdit ~/.zshrc

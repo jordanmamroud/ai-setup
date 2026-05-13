@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Creates a new local git repo, creates the matching GitHub repo,
+# connects them, and pushes main.
+# Usage: gnew <repo-name> [commit-message]
+# Example: gnew my-new-repo "Initial commit"
+
+if [ -z "${1:-}" ]; then
+  echo 'Usage: gnew <repo-name> [commit-message]'
+  echo 'Example: gnew my-new-repo "Initial commit"'
+  exit 1
+fi
+
+repo_name="$1"
+repo_url="https://github.com/jordanmamroud/$repo_name.git"
+
+git init || exit 1
+git branch -M main || exit 1
+git add .
+
+# Only create a commit if there are staged changes
+if ! git diff --cached --quiet; then
+  git commit -m "${2:-Initial commit}" || exit 1
+fi
+
+gh repo create "$repo_name" --public || exit 1
+
+# Update origin if it exists, otherwise add it
+git remote set-url origin "$repo_url" 2>/dev/null || git remote add origin "$repo_url"
+
+git push -u origin main

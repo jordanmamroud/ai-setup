@@ -2,13 +2,13 @@
 
 # Required Raycast metadata:
 # @raycast.schemaVersion 1
-# @raycast.title Claude → quickie
+# @raycast.title Claude → quickies
 # @raycast.mode silent
 
 # Optional Raycast metadata:
 # @raycast.icon 🤖
 # @raycast.packageName Claude
-# @raycast.description If an iTerm window for quickie already exists, focus it. Otherwise open a new iTerm window in ~/myquickie and start Claude Code.
+# @raycast.description If an iTerm window for quickies already exists, focus it. Otherwise open a new iTerm window in ~/mylab/quickies and start Claude Code.
 
 # To make a version for another repo, copy this file and change:
 #   - the @raycast.title line
@@ -47,7 +47,7 @@ tell application "iTerm"
     create window with default profile
     tell current session of current window
       set variable named "user.claudeTag" to tagValue
-      write text "cd /Users/jordanmamroud/myquickie && claude"
+      write text "cd /Users/jordanmamroud/mylab/quickies && claude"
     end tell
   end if
 end tell

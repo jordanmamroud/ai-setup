@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Opens VS Code by itself if no repo name is given.
+# If you pass a folder name, it opens that folder inside ~/mylab/main.
+# Usage: vopen [repo-name]
+
+repo_name="${1:-}"
+base_dir="$HOME/mylab/main"
+
+if [[ -z "$repo_name" ]]; then
+  code
+else
+  code "$base_dir/$repo_name"
+fi

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readme="$HOME/mylab/ai-setup/terminal/shortcuts/README.md"
+
+if [[ ! -f "$readme" ]]; then
+  echo "README not found at $readme" >&2
+  exit 1
+fi
+
+echo "Custom shortcuts:"
+echo
+awk '
+  /^\*\*Existing shortcuts:\*\*/ { found = 1; next }
+  found && /^##/ { exit }
+  found { print }
+' "$readme" | sed 's/`//g' | awk -F ' — ' '/^- / { print $1 }'
+echo
+echo "Full descriptions: $readme"

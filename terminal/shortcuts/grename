@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Renames a tracked file or folder with git mv, auto-detects file vs folder,
+# builds a matching commit message, then commits and pushes.
+# Usage: grename <old-path> <new-path>
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: grename <old-path> <new-path>"
+  exit 1
+fi
+
+old="$1"
+new="$2"
+
+if [ ! -e "$old" ]; then
+  echo "Source not found: $old"
+  exit 1
+fi
+
+if ! git ls-files --error-unmatch "$old" >/dev/null 2>&1; then
+  echo "Git is not tracking: $old"
+  echo "Run: git add \"$old\" && git commit -m \"Track $old\""
+  exit 1
+fi
+
+if [ -d "$old" ]; then
+  kind="folder"
+else
+  kind="file"
+fi
+
+oldbase=$(basename "$old")
+newbase=$(basename "$new")
+
+git mv "$old" "$new" || exit 1
+
+if [ "$kind" = "folder" ]; then
+  msg="Rename folder $oldbase to $newbase"
+else
+  msg="Rename file $oldbase to $newbase"
+fi
+
+git commit -m "$msg"
+git push

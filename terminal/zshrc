@@ -1,5 +1,5 @@
 export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/mylab/ai-setup/myshortcuts-shell/bin:$HOME/mylab/ai-setup/myshortcuts-shell/bin/aliases:$PATH"
+export PATH="$HOME/mylab/ai-setup/terminal/shortcuts:$PATH"
 
 
 # ========================================
@@ -10,7 +10,7 @@ export PATH="$HOME/mylab/ai-setup/myshortcuts-shell/bin:$HOME/mylab/ai-setup/mys
 # OR restart shell completely:
 #   exec zsh
 #
-# Git shortcuts (now in myshortcuts-shell/bin — run `mycmds` for the full list):
+# Git shortcuts (now in terminal/shortcuts — run `mycmds` for the full list):
 #   gp "commit message"              - add all, commit, push
 #   gdf "folder-name" "message"      - delete folder/file, commit, push
 #   gnew "repo-name" ["message"]       - init, add all, commit, create repo, push
@@ -18,20 +18,17 @@ export PATH="$HOME/mylab/ai-setup/myshortcuts-shell/bin:$HOME/mylab/ai-setup/mys
 # ones I use a lot
 # 	gh repo create
 #
-# Common Git Shortcuts:
-#   gs    - git status
-#   ga    - git add
-#   gc    - git commit
-#   gl    - git log --oneline --graph
-#   gco   - git checkout
-#   gb    - git branch
+# Primary entry point for custom shortcuts:
+#   !m <name> [args]                 - fuzzy-match a shortcut in terminal/shortcuts/ and run it
+#   !m                               - interactive picker (uses fzf if installed)
+#   mycmds                           - list all available shortcuts
 #
 #
 #
 # Common terminal commands
 # Create a file: touch FILENAME
 # create directory (aka folder): mkdir DIRECTORY NAME
-# Delete shit file or folder: rm -r FOLDER_OR_FILENAME
+# Delete this file or folder: rm -r FOLDER_OR_FILENAME
 #
 # rename file locally & in git: git mv old-name.txt new-name.txt
 #
@@ -48,7 +45,7 @@ export PATH="$PATH:/Users/jordanmamroud/.local/bin"
 
 # Claude launchers — quickies is the default scratchpad/navigator,
 # main is the explicit "this is a real project" entry point.
-# These stay as aliases (not scripts in myshortcuts-shell/bin) because they cd the
+# These stay as aliases (not scripts in terminal/shortcuts) because they cd the
 # current shell — a subshell script's cd would evaporate on exit.
 alias cquickie='cd ~/mylab/quickies && claude'
 alias cq='cd ~/mylab/quickies && claude'
@@ -60,7 +57,7 @@ alias chub='cd ~/mylab/main && claude'
 alias refresh='source ~/.zshrc && echo "↻ zshrc reloaded"'
 
 
-# Wraps the `clone` script (in myshortcuts-shell/bin) so the shell cds into
+# Wraps the `clone` script (in terminal/shortcuts) so the shell cds into
 # the new repo after cloning. The bare script (used from Claude `!`) just
 # clones; this function adds the cd that only an interactive shell can do.
 clone() {

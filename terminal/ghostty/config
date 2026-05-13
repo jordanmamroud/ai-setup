@@ -18,3 +18,8 @@ scrollback-limit = 1100000000
 
 # makes command G equalize windows
 keybind = super+g=equalize_splits
+
+# Visually separate splits (Catppuccin Mocha accents)
+split-divider-color = #89b4fa
+unfocused-split-opacity = 0.55
+unfocused-split-fill = #181825

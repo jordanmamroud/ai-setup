@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Adds only changed files, commits, and pushes.
+# Usage: gp "commit message"
+
+if [ -z "${1:-}" ]; then
+  echo 'Usage: gp "commit message"'
+  exit 1
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Not inside a git repository."
+  exit 1
+fi
+
+if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+  echo "No changed files to commit."
+  exit 0
+fi
+
+echo "Changed files:"
+git status --short
+
+git add -A
+
+if git diff --cached --quiet; then
+  echo "No staged changes to commit."
+  exit 0
+fi
+
+git commit -m "$1" && git push

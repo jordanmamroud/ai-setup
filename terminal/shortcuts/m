@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Fuzzy dispatcher for terminal/shortcuts.
+# Usage:
+#   m                 → interactive picker (fzf if installed, numbered list otherwise)
+#   m <name> [args]   → fuzzy-resolves <name> against bin/ and runs it with args
+# Matching priority: exact → prefix → subsequence. Ambiguity lists matches and exits 2.
+
+BIN_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+list_commands() {
+  find "$BIN_DIR" -maxdepth 1 -type f -perm -u+x ! -name 'm' -exec basename {} \; | sort
+}
+
+pick_interactive() {
+  local all
+  all="$(list_commands)"
+  if command -v fzf >/dev/null 2>&1; then
+    printf '%s\n' "$all" | fzf --prompt='m> ' --height=40% --reverse
+    return
+  fi
+  local -a arr=()
+  while IFS= read -r line; do arr+=("$line"); done <<<"$all"
+  local i=1
+  for cmd in "${arr[@]}"; do
+    printf '%2d) %s\n' "$i" "$cmd" >&2
+    i=$((i+1))
+  done
+  printf 'pick: ' >&2
+  local n
+  read -r n
+  [[ "$n" =~ ^[0-9]+$ ]] || { echo "m: not a number" >&2; return 1; }
+  [ "$n" -ge 1 ] && [ "$n" -le "${#arr[@]}" ] || { echo "m: out of range" >&2; return 1; }
+  printf '%s\n' "${arr[$((n - 1))]}"
+}
+
+run_or_die() {
+  local name="$1"
+  shift
+  exec "$BIN_DIR/$name" "$@"
+}
+
+if [ $# -eq 0 ]; then
+  pick="$(pick_interactive)" || exit $?
+  [ -z "$pick" ] && exit 0
+  run_or_die "$pick"
+fi
+
+query="$1"
+shift
+
+all="$(list_commands)"
+
+# Tier 1: exact
+exact="$(printf '%s\n' "$all" | awk -v q="$query" '$0 == q {print; exit}')"
+[ -n "$exact" ] && run_or_die "$exact" "$@"
+
+# Tier 2: prefix
+prefix=()
+while IFS= read -r line; do
+  [ -n "$line" ] && prefix+=("$line")
+done < <(printf '%s\n' "$all" | awk -v q="$query" 'index($0, q) == 1')
+if [ "${#prefix[@]}" -eq 1 ]; then
+  run_or_die "${prefix[0]}" "$@"
+fi
+if [ "${#prefix[@]}" -gt 1 ]; then
+  {
+    echo "m: '$query' matches multiple (prefix):"
+    printf '  %s\n' "${prefix[@]}"
+  } >&2
+  exit 2
+fi
+
+# Tier 3: subsequence (chars of query appear in name in order, case-insensitive)
+subseq=()
+while IFS= read -r line; do
+  [ -n "$line" ] && subseq+=("$line")
+done < <(printf '%s\n' "$all" | awk -v q="$query" '
+{
+  name = $0
+  qi = 1
+  ni = 1
+  while (qi <= length(q) && ni <= length(name)) {
+    if (tolower(substr(q, qi, 1)) == tolower(substr(name, ni, 1))) qi++
+    ni++
+  }
+  if (qi > length(q)) print name
+}')
+
+case "${#subseq[@]}" in
+  0)
+    echo "m: no match for '$query'" >&2
+    exit 1
+    ;;
+  1)
+    run_or_die "${subseq[0]}" "$@"
+    ;;
+  *)
+    {
+      echo "m: '$query' matches multiple (subsequence):"
+      printf '  %s\n' "${subseq[@]}"
+    } >&2
+    exit 2
+    ;;
+esac

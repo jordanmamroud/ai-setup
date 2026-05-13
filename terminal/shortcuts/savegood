@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+file="${HOME}/mylab/ai-setup/tuning/good-responses.md"
+touch "$file"
+
+cwd="$(pwd)"
+if [[ "$cwd" == "$HOME"* ]]; then
+  source_label="~${cwd#$HOME}"
+else
+  source_label="$cwd"
+fi
+
+timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+
+{
+  echo ""
+  echo "---"
+  echo ""
+  echo "## $timestamp"
+  echo ""
+  echo "**Source:** $source_label"
+  echo ""
+} >> "$file"
+
+code "$file"
+echo "Appended new entry to: $file"

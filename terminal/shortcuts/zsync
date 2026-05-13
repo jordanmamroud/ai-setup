@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Copies the live ~/.zshrc into the version-controlled backup in the
+# ai-setup repo, then stages, commits, and pushes that updated file.
+# Usage: zsync ["commit message"]
+
+target="$HOME/mylab/ai-setup/terminal/zshrc"
+repo="$HOME/mylab/ai-setup"
+message="${1:-Update zshrc}"
+
+cp ~/.zshrc "$target"
+cd "$repo"
+git add terminal/zshrc
+git commit -m "$message"
+git push
