@@ -15,7 +15,7 @@
 #    ~/.codex/skills/<name>.
 #
 # 3. Named file mappings:
-#    AGENTS.md -> ~/.codex/AGENTS.md          (Codex global instructions; the
+#    global/AGENTS.md -> ~/.codex/AGENTS.md   (Codex global instructions; the
 #    analog of global/CLAUDE.md -> ~/.claude/CLAUDE.md in the Claude installer)
 #
 # Idempotent. Uses `ln -sfn` so dangling or stale symlinks get refreshed.
@@ -78,7 +78,7 @@ done
 # 3. Named file mappings
 # Format: "<repo-relative source>:<absolute destination>"
 NAMED_FILES=(
-  "AGENTS.md:${CODEX_DIR}/AGENTS.md"
+  "global/AGENTS.md:${CODEX_DIR}/AGENTS.md"
 )
 
 for pair in "${NAMED_FILES[@]}"; do

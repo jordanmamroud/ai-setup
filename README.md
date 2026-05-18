@@ -21,6 +21,17 @@ Real shell scripts on `PATH` (work from terminals, Claude `!` prefix, scripts, c
 Source of truth: [`terminal/shortcuts/README.md`](terminal/shortcuts/README.md). Run
 `mycmds` for the live list.
 
+## Global agent rules
+
+Global instruction files live in `global/` so they do not get picked up as project-level
+rules inside this repo:
+
+- `global/CLAUDE.md` → `~/.claude/CLAUDE.md`
+- `global/AGENTS.md` → `~/.codex/AGENTS.md`
+
+Run `./claude-link-commands.sh` or `./codex-link-commands.sh` after changes to refresh
+symlinks.
+
 ## Auto-memory
 
 Claude Code's auto-memory (the `MEMORY.md` injected into every system prompt)

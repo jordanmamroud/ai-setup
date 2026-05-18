@@ -1,19 +1,19 @@
 # myagents
 
-Promote a polished global Codex behavior rule into `/Users/jordanmamroud/mylab/ai-setup/AGENTS.md`, then commit and push it.
+Promote a polished global Codex behavior rule into `/Users/jordanmamroud/mylab/ai-setup/global/AGENTS.md`, then commit and push it.
 
 Use only when the user explicitly invokes `/myagents` or asks to add/update global AGENTS.md rules.
 
 ## Source of truth
 
-- Canonical file: `/Users/jordanmamroud/mylab/ai-setup/AGENTS.md`
+- Canonical file: `/Users/jordanmamroud/mylab/ai-setup/global/AGENTS.md`
 - Live global file: `~/.codex/AGENTS.md`
 - The live file should be a symlink to the canonical file. Run `/Users/jordanmamroud/mylab/ai-setup/codex-link-commands.sh` after edits to refresh it.
 - Do not edit `~/.codex/AGENTS.md` directly.
 
 ## Workflow
 
-1. Read the canonical `AGENTS.md`.
+1. Read the canonical `global/AGENTS.md`.
 2. Take the user's proposed rule, complaint, or rough snippet from the invocation. If it is missing, ask for the rule and stop.
 3. Rewrite it in the existing AGENTS voice:
    - direct, brief, concrete
@@ -24,8 +24,8 @@ Use only when the user explicitly invokes `/myagents` or asks to add/update glob
 5. Insert the rule into the best existing section. Create a new section only when no existing heading fits.
 6. Run:
    - `./codex-link-commands.sh`
-   - `test "$(readlink "$HOME/.codex/AGENTS.md")" = "/Users/jordanmamroud/mylab/ai-setup/AGENTS.md"`
-7. Review `git diff -- AGENTS.md`.
+   - `test "$(readlink "$HOME/.codex/AGENTS.md")" = "/Users/jordanmamroud/mylab/ai-setup/global/AGENTS.md"`
+7. Review `git diff -- global/AGENTS.md`.
 8. Commit and push the change:
    - stage only files intentionally changed for this request
    - commit message format: `Update global Codex agent rules`

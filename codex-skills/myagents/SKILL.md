@@ -1,6 +1,6 @@
 ---
 name: myagents
-description: Explicit-only skill for promoting polished global Codex behavior rules into the canonical ai-setup AGENTS.md, refreshing the symlink, then committing and pushing. Use when the user explicitly invokes $myagents or asks to add/update global AGENTS.md rules.
+description: Explicit-only skill for promoting polished global Codex behavior rules into the canonical ai-setup global/AGENTS.md, refreshing the symlink, then committing and pushing. Use when the user explicitly invokes $myagents or asks to add/update global AGENTS.md rules.
 ---
 
 # myagents

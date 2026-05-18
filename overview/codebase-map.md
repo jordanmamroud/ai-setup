@@ -7,9 +7,7 @@ Grouped by top-level location, in filesystem order.
 ## Root files
 
 - `CLAUDE.md` — project instructions for this repo
-- `AGENTS.md` — Codex global rules (→ `~/.codex/AGENTS.md`)
 - `README.md` — home-directory layout (`~/mylab`, aliases, auto-memory)
-- `restructure-plan.md` — restructure planning doc (historical; superseded note at top)
 - `claude-link-commands.sh` — links `claude-skills/` into `~/.claude/` (flow in `how-it-works.md`)
 - `codex-link-commands.sh` — links `codex-skills/` into `~/.codex/` (sibling installer)
 
@@ -22,6 +20,7 @@ Grouped by top-level location, in filesystem order.
 ## global/ — Global agent rules
 
 - `CLAUDE.md` — Claude Code global rules (→ `~/.claude/CLAUDE.md`)
+- `AGENTS.md` — Codex global rules (→ `~/.codex/AGENTS.md`)
 
 ## claude-skills/ — Claude skills folder. symlinked too
 

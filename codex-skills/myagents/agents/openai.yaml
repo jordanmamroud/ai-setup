@@ -1,6 +1,6 @@
 interface:
   display_name: "myagents"
-  short_description: "Promote global Codex rules into AGENTS.md"
+  short_description: "Promote global Codex rules into global/AGENTS.md"
   default_prompt: "Use $myagents to add this as a polished global Codex rule:"
 
 policy:
