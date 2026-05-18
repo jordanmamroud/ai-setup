@@ -7,7 +7,6 @@ Grouped by top-level location, in filesystem order.
 ## Root files
 
 - `CLAUDE.md` — project instructions for this repo
-- `CLAUDE-global.md` — global `~/.claude/CLAUDE.md` (symlink target; empty)
 - `AGENTS.md` — Codex global rules (→ `~/.codex/AGENTS.md`)
 - `README.md` — home-directory layout (`~/mylab`, aliases, auto-memory)
 - `restructure-plan.md` — restructure planning doc (historical; superseded note at top)
@@ -20,10 +19,15 @@ Grouped by top-level location, in filesystem order.
 - `regenerate-project-picker.sh` — rebuild the project-picker list
 - `new_evernote.applescript` — create a new Evernote note
 
+## global/ — Global agent rules
+
+- `CLAUDE.md` — Claude Code global rules (→ `~/.claude/CLAUDE.md`)
+
 ## claude-skills/ — Claude skills folder. symlinked too
 
 - `jm-transcript/` — append session to a project's `transcript.md`
 - `mybedtime/` — write `BEDTIME.md` to resume a fresh session
+- `myclaude/` — promote polished global Claude rules into `global/CLAUDE.md`
 - `mydoc-checkpoint/` — capture in-flight work into `overview/notes.md`
 - `mydoc-overview/` — create/sync the `overview/` folder (this skill)
 - `mydoc-spec/` — guided interview to create a versioned `spec-vN.md`

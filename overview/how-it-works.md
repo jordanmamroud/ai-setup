@@ -13,7 +13,7 @@ This repo is configuration, not a running program. Three flows operate on it.
 1. Resolves the repo dir and ensures the target dir exists (`~/.claude/commands/`, `~/.codex/prompts/`, or `~/.codex/skills/`).
 2. Picks each entry — Claude: for each subfolder in `claude-skills/`, `SKILL.md` (slash name from `name:` frontmatter) else the single non-design `.md` (trailing `-command` stripped); Codex: each flat `codex-skills/<name>.md` becomes a prompt, and each `codex-skills/<name>/` folder with `SKILL.md` becomes a packaged skill.
 3. Symlinks the entry into the target with `ln -sfn`, skipping unchanged links and refusing to overwrite a real file.
-4. Links named-file mappings — Claude: `CLAUDE-global.md` → `~/.claude/CLAUDE.md`; Codex: `AGENTS.md` → `~/.codex/AGENTS.md` (each replaces an empty file, never a real one).
+4. Links named-file mappings — Claude: `global/CLAUDE.md` → `~/.claude/CLAUDE.md`; Codex: `AGENTS.md` → `~/.codex/AGENTS.md` (each replaces an empty file, never a real one).
 5. Claude only: symlinks `claude-skills/myverify-ui/ui-verify` to `~/bin/ui-verify` so it lands on `PATH`.
 6. Prints a `linked / unchanged / skipped` tally.
 

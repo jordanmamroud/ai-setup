@@ -16,7 +16,7 @@
 #
 # 3. Named file mappings:
 #    AGENTS.md -> ~/.codex/AGENTS.md          (Codex global instructions; the
-#    analog of CLAUDE-global.md -> ~/.claude/CLAUDE.md in the Claude installer)
+#    analog of global/CLAUDE.md -> ~/.claude/CLAUDE.md in the Claude installer)
 #
 # Idempotent. Uses `ln -sfn` so dangling or stale symlinks get refreshed.
 # Will not overwrite a real (non-symlink, non-empty) file at the destination;

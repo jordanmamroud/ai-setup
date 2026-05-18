@@ -14,7 +14,7 @@
 #    - Skip with warning if no clear entry can be picked.
 #
 # 2. Named file mappings:
-#    CLAUDE-global.md -> ~/.claude/CLAUDE.md
+#    global/CLAUDE.md -> ~/.claude/CLAUDE.md
 #
 # 3. ~/bin/ui-verify -> claude-skills/myverify-ui/ui-verify (puts the shell command
 #    on PATH).
@@ -112,7 +112,7 @@ done
 # 2. Named file mappings
 # Format: "<repo-relative source>:<absolute destination>"
 NAMED_FILES=(
-  "CLAUDE-global.md:${CLAUDE_DIR}/CLAUDE.md"
+  "global/CLAUDE.md:${CLAUDE_DIR}/CLAUDE.md"
 )
 
 for pair in "${NAMED_FILES[@]}"; do
