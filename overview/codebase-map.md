@@ -8,7 +8,7 @@ Grouped by top-level location, in filesystem order.
 
 - `CLAUDE.md` — project instructions for this repo
 - `CLAUDE-global.md` — global `~/.claude/CLAUDE.md` (symlink target; empty)
-- `AGENTS-system.md` — Codex voice rules (→ `~/.codex/AGENTS.md`)
+- `AGENTS.md` — Codex global rules (→ `~/.codex/AGENTS.md`)
 - `README.md` — home-directory layout (`~/mylab`, aliases, auto-memory)
 - `restructure-plan.md` — restructure planning doc (historical; superseded note at top)
 - `claude-link-commands.sh` — links `claude-skills/` into `~/.claude/` (flow in `how-it-works.md`)
@@ -39,7 +39,8 @@ Grouped by top-level location, in filesystem order.
 ## codex-skills/ — Codex prompt and skill copies
 
 - `mydoc-overview.md` · `mydoc-checkpoint.md` · `mydoc-spec.md` — flat Codex prompts installed by `codex-link-commands.sh`
-- `mydoc-overview/` · `mydoc-checkpoint/` · `mydoc-spec/` — packaged skill-form copies (`SKILL.md`, `references/`, `agents/`)
+- `myagents.md` — flat prompt for promoting polished global rules into `AGENTS.md`
+- `mydoc-overview/` · `mydoc-checkpoint/` · `mydoc-spec/` · `myagents/` — packaged skill-form copies (`SKILL.md`, `references/`, `agents/`)
 
 ## terminal/ — shell setup
 

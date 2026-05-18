@@ -16,7 +16,7 @@ Plan-only. No file moves yet. Walk through one step at a time and confirm before
 ├── README.md
 ├── CLAUDE.md
 ├── CLAUDE-global.md
-├── AGENTS-system.md
+├── AGENTS.md
 └── claude-link-commands.sh
 ```
 
@@ -169,7 +169,7 @@ These must match the `terminal/zshrc` edits from Step 5b. After updating, run `s
 | `CLAUDE.md` line 5 | `raycast-scripts/` → `raycast/` |
 | `CLAUDE.md` line 15 | Inventory list — rewrite to reflect new top-level shape (`skills/`, `terminal/`, `raycast/`, `tuning/`) |
 | `CLAUDE-global.md` lines 80, 81 | Same edits as `~/.claude/CLAUDE.md` (this is the version-controlled mirror) |
-| `AGENTS-system.md` | Check for any path refs (none found in audit, but verify) |
+| `AGENTS.md` | Check for any path refs (none found in audit, but verify) |
 
 ### Phase E — Rewrite the deploy script
 
