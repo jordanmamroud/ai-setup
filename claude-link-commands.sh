@@ -3,7 +3,7 @@
 #
 # Three things this does:
 #
-# 1. Each subfolder in skills/ becomes a slash command at
+# 1. Each subfolder in claude-skills/ becomes a slash command at
 #    ~/.claude/commands/<name>.md. Algorithm per folder:
 #    - If SKILL.md exists: read `name:` from frontmatter; link SKILL.md as
 #      <name>.md.
@@ -16,7 +16,7 @@
 # 2. Named file mappings:
 #    CLAUDE-global.md -> ~/.claude/CLAUDE.md
 #
-# 3. ~/bin/ui-verify -> skills/myverify-ui/ui-verify (puts the shell command
+# 3. ~/bin/ui-verify -> claude-skills/myverify-ui/ui-verify (puts the shell command
 #    on PATH).
 #
 # Idempotent. Uses `ln -sfn` so dangling or stale symlinks get refreshed.
@@ -43,7 +43,7 @@ unchanged=0
 skipped=0
 
 # 1. Skills -> slash commands
-for dir in "${REPO_DIR}/skills"/*/; do
+for dir in "${REPO_DIR}/claude-skills"/*/; do
   [ -d "$dir" ] || continue
   dir="${dir%/}"  # strip trailing slash for clean path output
   name="$(basename "$dir")"
@@ -139,7 +139,7 @@ for pair in "${NAMED_FILES[@]}"; do
 done
 
 # 3. ~/bin/ui-verify
-ui_verify="${REPO_DIR}/skills/myverify-ui/ui-verify"
+ui_verify="${REPO_DIR}/claude-skills/myverify-ui/ui-verify"
 if [ -f "$ui_verify" ]; then
   mkdir -p "${HOME}/bin"
   bin_dst="${HOME}/bin/ui-verify"

@@ -1,0 +1,7 @@
+interface:
+  display_name: "mydoc-spec"
+  short_description: "Guided versioned project spec workflow"
+  default_prompt: "Use $mydoc-spec to create or continue a versioned project spec."
+
+policy:
+  allow_implicit_invocation: false

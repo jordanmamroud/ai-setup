@@ -1,0 +1,7 @@
+interface:
+  display_name: "mydoc-checkpoint"
+  short_description: "Checkpoint session notes into overview"
+  default_prompt: "Use $mydoc-checkpoint to checkpoint this session into overview/notes.md."
+
+policy:
+  allow_implicit_invocation: false

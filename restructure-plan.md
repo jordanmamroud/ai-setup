@@ -1,5 +1,7 @@
 # ai-setup restructure plan
 
+> **Superseded (2026-05-18).** This documents the earlier `commands/` → `skills/` migration and is kept as a historical record — paths below are accurate *for that migration* and are intentionally NOT rewritten. Since then, `skills/` was renamed to `claude-skills/` and a `codex-skills/` folder + `codex-link-commands.sh` were added (Claude/Codex split). For the current layout see `CLAUDE.md` and `overview/`.
+
 Plan-only. No file moves yet. Walk through one step at a time and confirm before each.
 
 ## 1. Top-level structure
