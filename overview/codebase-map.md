@@ -42,7 +42,7 @@ Grouped by top-level location, in filesystem order.
 ## codex-skills/ — Codex prompt and skill copies
 
 - `mydoc-overview.md` · `mydoc-checkpoint.md` · `mydoc-spec.md` — flat Codex prompts installed by `codex-link-commands.sh`
-- `myagents.md` — flat prompt for promoting polished global rules into `AGENTS.md`
+- `myagents.md` — flat prompt for promoting polished global rules into `global/AGENTS.md`
 - `mydoc-overview/` · `mydoc-checkpoint/` · `mydoc-spec/` · `myagents/` — packaged skill-form copies (`SKILL.md`, `references/`, `agents/`)
 
 ## terminal/ — shell setup
