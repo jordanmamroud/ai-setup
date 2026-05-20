@@ -1,0 +1,4 @@
+interface:
+  display_name: "JM HubSpot LPs"
+  short_description: "Build and audit HubSpot landing page variants"
+  default_prompt: "Use $jm-hubspotlps to create a new HubSpot landing page template variant safely."

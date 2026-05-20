@@ -1,0 +1,7 @@
+interface:
+  display_name: "JM Harden"
+  short_description: "Find edge cases and robustness gaps"
+  default_prompt: "Use $jm-harden to review this project for edge cases and production-readiness risks."
+
+policy:
+  allow_implicit_invocation: false
