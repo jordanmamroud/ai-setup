@@ -39,6 +39,7 @@ alias file — `m` figures it out from the canonical name.
   in VS Code (accepts multiple names)
 - `mycmds` — print this list of shortcuts (reads from this README)
 - `cx [args]` — launch Codex with approvals and sandbox bypassed; intended for `m cx`
+- `ccd [args]` — launch Claude Code with permission checks skipped; intended for `m ccd`
 - `openfolder [path]` — open the current directory (or given path) in a new VS Code window
 - `zopen` — open `~/.zshrc` in TextEdit (the top of that file has the quick-reference cheat sheet)
 - `zsync ["message"]` — copy live `~/.zshrc` → `ai-setup/terminal/zshrc` backup, then commit and push
