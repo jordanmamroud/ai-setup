@@ -1,6 +1,6 @@
 # Agent Instructions
 
-This folder holds `skill-creator` — a skill for creating, testing, and iteratively improving other skills. Work in this folder is about improving skill-creator itself (its SKILL.md, agents/, scripts/, and viewer), not about using it to build some other skill.
+This folder holds `skill-creator` — a skill for creating, testing, and iteratively improving other skills. Work in this folder is about improving skill-creator itself (its SKILL.md, scripts/, and viewer), not about using it to build some other skill.
 
 ## Eval mode vs. production mode
 
@@ -8,14 +8,20 @@ When the user gives an example prompt or scenario while discussing this skill, t
 
 If an example exposes a workflow problem, patch skill-creator's instructions or references instead of continuing the example.
 
-## Known failure modes being fixed (watch for regressions)
+## Design decision: no automated grading (do not reintroduce it)
 
-These are the behaviors the user has been burned by. The skill files now contain countermeasures — when editing, preserve them:
+The upstream skill-creator had assertions, a grader agent, benchmarking with baselines, an analyst pass, and blind comparison. The user removed all of it deliberately (the pre-strip snapshot is preserved in git history). It kept misfiring: the skill invented grading criteria the user never asked for and reported meaningless pass rates. The fix chosen was removal, not gating.
 
-- **Invented grading criteria.** The skill used to draft assertions on its own and grade against them, producing pass rates on criteria the user never asked for. Countermeasure: judging criteria come from the user (`evals/criteria.md`), assertions must trace to them and be approved before any grading, and grading is skipped entirely when no approved assertions exist.
-- **"Run another eval" misread as re-grading.** The skill used to respond to "do another evaluation" by re-running rubric checks on existing outputs. Countermeasure: the "What the user's words mean" section in SKILL.md maps that phrasing to a full new iteration (fresh runs → viewer → feedback). Never satisfy it with grading alone.
-- **All-or-nothing workflow testing.** Multi-step skills couldn't have one step evaluated in isolation. Countermeasure: scoped test cases with a `scope` field and fixtures under `evals/fixtures/<scope>/`.
+What remains is the loop the user actually wants: test runs → transcript friction skim → viewer → user feedback → a proposed change plan the user OKs → apply → repeat. The user's judgment in the viewer IS the evaluation. Baseline (without-skill) runs are offered once, on the first iteration of a brand-new skill, and otherwise skipped.
+
+When editing this skill, do not add back rubrics, assertions, pass rates, quality scores, or auto-grading in any form — and don't drift toward them under other names ("checks", "validations", "scorecards").
+
+## Known failure modes (watch for regressions)
+
+- **"Run another eval" misread.** "Do another evaluation" means a full new iteration (fresh runs → viewer → feedback), never re-examining existing outputs. The "What the user's words mean" section in SKILL.md encodes this — keep it.
+- **Skipping the change-plan checkpoint.** The skill must present a short "here's what I plan to change and why" and get the user's OK before editing the skill under iteration. Silent edits are a regression.
+- **All-or-nothing workflow testing.** Multi-step skills need one step evaluable in isolation: scoped test cases with a `scope` field and fixtures under `evals/fixtures/<scope>/`. Keep that machinery.
 
 ## User preference
 
-The user wants evaluation centered on their own judgment via the viewer, with quantitative grading as an opt-in supplement — not a wall of auto-generated checks. Keep changes lean and preserve the skill's conversational, explain-the-why style.
+Evaluation centered on the user's own judgment via the viewer. Keep changes lean and preserve the skill's conversational, explain-the-why style.
