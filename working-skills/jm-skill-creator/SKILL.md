@@ -1,5 +1,5 @@
 ---
-name: skill-creator
+name: jm-skill-creator
 description: Create new skills, modify and improve existing skills. Use when users want to create a skill from scratch, edit or optimize an existing skill, run test cases to see how a skill performs, iterate on a skill based on feedback, or optimize a skill's description for better triggering accuracy.
 ---
 
@@ -238,7 +238,7 @@ Once all runs are done, read the transcripts — every iteration, before the use
 ### Step 4: Launch the viewer
 
 ```bash
-nohup python <skill-creator-path>/eval-viewer/generate_review.py \
+nohup python <jm-skill-creator-path>/eval-viewer/generate_review.py \
   <workspace>/iteration-N \
   --skill-name "my-skill" \
   > /dev/null 2>&1 &

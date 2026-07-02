@@ -1,6 +1,6 @@
 # JSON Schemas
 
-This document defines the JSON files used by skill-creator's feedback-improve loop.
+This document defines the JSON files used by jm-skill-creator's feedback-improve loop.
 
 ---
 

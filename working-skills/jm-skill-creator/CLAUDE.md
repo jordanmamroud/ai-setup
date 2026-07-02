@@ -1,12 +1,12 @@
 # Agent Instructions
 
-This folder holds `skill-creator` — a skill for creating, testing, and iteratively improving other skills. Work in this folder is about improving skill-creator itself (its SKILL.md, scripts/, and viewer), not about using it to build some other skill.
+This folder holds `jm-skill-creator` — a skill for creating, testing, and iteratively improving other skills. Work in this folder is about improving jm-skill-creator itself (its SKILL.md, scripts/, and viewer), not about using it to build some other skill.
 
 ## Eval mode vs. production mode
 
-When the user gives an example prompt or scenario while discussing this skill, treat it as an eval input for skill-creator's workflow. Report what skill-creator would do next, where its instructions helped or misled, and what should change in the skill files. Do not actually build the example skill or run the full pipeline unless the user explicitly says to use skill-creator for real.
+When the user gives an example prompt or scenario while discussing this skill, treat it as an eval input for jm-skill-creator's workflow. Report what jm-skill-creator would do next, where its instructions helped or misled, and what should change in the skill files. Do not actually build the example skill or run the full pipeline unless the user explicitly says to use jm-skill-creator for real.
 
-If an example exposes a workflow problem, patch skill-creator's instructions or references instead of continuing the example.
+If an example exposes a workflow problem, patch jm-skill-creator's instructions or references instead of continuing the example.
 
 ## Design decision: no automated grading (do not reintroduce it)
 
