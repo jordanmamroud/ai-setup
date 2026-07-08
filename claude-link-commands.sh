@@ -21,9 +21,6 @@
 # 3. Named file mappings:
 #    agent-rules/CLAUDE.md -> ~/.claude/CLAUDE.md
 #
-# 4. ~/bin/ui-verify -> skills/myverify-ui/ui-verify (puts the shell command
-#    on PATH).
-#
 # Idempotent. Uses `ln -sfn` so dangling or stale symlinks get refreshed.
 # Will not overwrite a real (non-symlink, non-empty) file at the destination.
 
@@ -40,7 +37,10 @@ mkdir -p "${CLAUDE_DIR}/commands" "${CLAUDE_DIR}/skills"
 # command behavior.
 CLAUDE_SKILL_FOLDERS=(
   brainstorming
+  define-outcome
   jm-council
+  jm-skill-creator
+  web-perf
   writing-plans
 )
 
@@ -191,23 +191,6 @@ for pair in "${NAMED_FILES[@]}"; do
   echo "linked: $dst -> $src"
   linked=$((linked + 1))
 done
-
-# 4. ~/bin/ui-verify
-ui_verify="${SKILLS_DIR}/myverify-ui/ui-verify"
-if [ -f "$ui_verify" ]; then
-  mkdir -p "${HOME}/bin"
-  bin_dst="${HOME}/bin/ui-verify"
-  if [ -e "$bin_dst" ] && [ ! -L "$bin_dst" ]; then
-    echo "skip (real file at $bin_dst — not overwriting)" >&2
-    skipped=$((skipped + 1))
-  elif [ -L "$bin_dst" ] && [ "$(readlink "$bin_dst")" = "$ui_verify" ]; then
-    unchanged=$((unchanged + 1))
-  else
-    ln -sfn "$ui_verify" "$bin_dst"
-    echo "linked: $bin_dst -> $ui_verify"
-    linked=$((linked + 1))
-  fi
-fi
 
 echo
 echo "done. linked=${linked} unchanged=${unchanged} skipped=${skipped}"

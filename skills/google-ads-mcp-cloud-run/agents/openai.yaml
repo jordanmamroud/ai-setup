@@ -1,0 +1,4 @@
+interface:
+  display_name: "Google Ads MCP Cloud Run"
+  short_description: "Deploy this Google Ads MCP stack safely"
+  default_prompt: "Use $google-ads-mcp-cloud-run to validate and deploy the Google Ads MCP server to Cloud Run."
