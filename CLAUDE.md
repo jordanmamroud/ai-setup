@@ -2,19 +2,26 @@
 
 This folder is the central place for my Claude Code + Codex + terminal setup. It holds config and scripts that are version-controlled to GitHub so I can keep my environment in sync across sessions.
 
-The `zsync` zsh function copies `~/.zshrc` into `terminal/zshrc` and pushes it. Raycast script commands live in `raycast/`.
+The `zsync` shortcut copies `~/.zshrc` into `terminal/zshrc` with API keys redacted, then pushes it. Raycast script commands live in `raycast/`.
 
 ## How I want Claude to help me
 
 Help me navigate my file system, move files and folders around, and rename things. Also answer quick questions and do research as I work. Lean toward action over discussion when the task is clearly a file or shell operation.
 
-## Layout
+## Repo Layout
 
-See `README.md` in this folder for the home-directory layout (`~/myghub`, `~/myquickie`, aliases, auto-memory).
-
-This folder contains: `README.md`, `CLAUDE.md` (this file), `global/CLAUDE.md` (Claude global rules → `~/.claude/CLAUDE.md`), `global/AGENTS.md` (Codex global rules → `~/.codex/AGENTS.md`), `claude-link-commands.sh` (links `claude-skills/` and `global/CLAUDE.md` into `~/.claude/`) and `codex-link-commands.sh` (links `codex-skills/` and `global/AGENTS.md` into `~/.codex/`), `claude-skills/` (Claude slash commands and SKILL.md skills, each self-contained in its own subfolder), `codex-skills/` (Codex prompts and packaged skill folders), `terminal/` (shell setup: `terminal/zshrc` backup of `~/.zshrc`, `terminal/shortcuts/` global PATH shortcuts, `terminal/ghostty/` Ghostty terminal config), `raycast/` (Raycast script commands), `tuning/` (good/bad response corpus for tuning agent behavior — see its own `README.md`).
+- `.claude/` — Local Claude Code settings for this repo.
+- `agent-rules/` — Canonical global instruction files for Claude and Codex.
+- `archive/` — Legacy rollback copies from older skill layouts, plus retired skills in `archive/skills/`.
+- `hooks/` — Optional Codex hook scripts and hook configuration.
+- `km-skills/` — Kitchen Magic workspace skills, staged here until they get a dedicated workspace.
+- `overview/` — Repo overview docs, codebase map, flow notes, and session notes.
+- `raycast/` — Raycast script commands for launching Claude and related helpers.
+- `skills/` — Shared global source for Claude commands, Codex prompts, and Codex packaged skills.
+- `terminal/` — Shell config backup, global shortcuts, and terminal configuration.
+- `tuning/` — Saved good and bad agent responses for improving agent behavior.
 
 ## Conventions
 
 - **Naming**: use a `<group>-<verb>-<target>` pattern for files and folders so related items sort alphabetically and the action is obvious from the name alone. Bad: `claude-quickie.sh` (no verb — does it open it? delete it? sync it?). Good: `claude-open-quickie.sh` (verb in the middle; future `claude-*` scripts will group together).
-- **Claude vs Codex skills**: `claude-skills/<name>/` holds the Claude form (one self-contained folder per skill — `SKILL.md` with `name:` frontmatter, or a single entry `.md`; `claude-link-commands.sh` links it into `~/.claude/commands/`). `codex-skills/<name>.md` holds the flat Codex prompt installed by `codex-link-commands.sh` into `~/.codex/prompts/`; matching `codex-skills/<name>/` folders are linked into `~/.codex/skills/` for packaged skill workflows. The Codex doc skills are intentional **duplicates** of their Claude counterparts (not symlinks) so they can diverge; they retarget `CLAUDE.md` references to `AGENTS.md`.
+- **Shared skills**: edit `skills/<name>/` first. Claude slash commands come from `claude-command.md` when present, otherwise the single clear entry `.md`; Codex prompts come from `codex-prompt.md`; Codex packaged skills come from `SKILL.md`. When Claude and Codex need different wording, keep the adapters inside the same `skills/<name>/` folder instead of recreating separate `claude-skills/` and `codex-skills/` trees.

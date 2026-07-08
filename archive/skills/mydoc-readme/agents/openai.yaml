@@ -1,0 +1,7 @@
+interface:
+  display_name: "mydoc-readme"
+  short_description: "Create or refresh root project README"
+  default_prompt: "Use $mydoc-readme to create or refresh this project's root README."
+
+policy:
+  allow_implicit_invocation: false

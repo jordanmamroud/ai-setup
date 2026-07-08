@@ -1,7 +1,0 @@
-interface:
-  display_name: "mydoc-overview"
-  short_description: "Create or refresh project overview docs"
-  default_prompt: "Use $mydoc-overview to create or refresh this project's overview folder."
-
-policy:
-  allow_implicit_invocation: false

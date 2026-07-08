@@ -1,22 +1,27 @@
 #!/usr/bin/env bash
-# claude-link-commands.sh — install ai-setup skills + named files into ~/.claude/.
+# claude-link-commands.sh — install ai-setup Claude commands + named files into ~/.claude/.
 #
 # Three things this does:
 #
-# 1. Each subfolder in claude-skills/ becomes a slash command at
+# 1. Each subfolder in shared skills/ can become a slash command at
 #    ~/.claude/commands/<name>.md. Algorithm per folder:
-#    - If SKILL.md exists: read `name:` from frontmatter; link SKILL.md as
-#      <name>.md.
+#    - If claude-command.md exists: read `name:` from frontmatter when present;
+#      otherwise use the folder name.
 #    - Else: pick the single entry .md file by filtering out
 #      README/CLAUDE/overview/STATUS/Context/transcript/spec/brainstorm/
-#      CHECKPOINT/BEDTIME/*-spec/*-prompt. If the filename ends in
-#      "-command", that suffix is stripped for the slash name.
-#    - Skip with warning if no clear entry can be picked.
+#      CHECKPOINT/BEDTIME/SKILL/codex-prompt/*-spec/*-prompt. If the filename
+#      ends in "-command", that suffix is stripped for the slash name.
+#    - Ignore Codex-only packaged skill folders; warn only when a likely Claude
+#      command folder has no clear entry.
 #
-# 2. Named file mappings:
-#    global/CLAUDE.md -> ~/.claude/CLAUDE.md
+# 2. Folders listed in CLAUDE_SKILL_FOLDERS are Claude skills (model-invocable,
+#    SKILL.md entry), not slash commands: the whole folder is symlinked to
+#    ~/.claude/skills/<name> and excluded from command linking.
 #
-# 3. ~/bin/ui-verify -> claude-skills/myverify-ui/ui-verify (puts the shell command
+# 3. Named file mappings:
+#    agent-rules/CLAUDE.md -> ~/.claude/CLAUDE.md
+#
+# 4. ~/bin/ui-verify -> skills/myverify-ui/ui-verify (puts the shell command
 #    on PATH).
 #
 # Idempotent. Uses `ln -sfn` so dangling or stale symlinks get refreshed.
@@ -24,46 +29,69 @@
 
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd -P)"
 CLAUDE_DIR="${HOME}/.claude"
+SKILLS_DIR="${REPO_DIR}/skills"
 
-mkdir -p "${CLAUDE_DIR}/commands"
+mkdir -p "${CLAUDE_DIR}/commands" "${CLAUDE_DIR}/skills"
+
+# Folders in skills/ that install as Claude skills (~/.claude/skills/<name>)
+# instead of slash commands. Opt-in by name so existing folders keep their
+# command behavior.
+CLAUDE_SKILL_FOLDERS=(
+  brainstorming
+  jm-council
+  writing-plans
+)
+
+is_claude_skill_folder() {
+  local n
+  for n in "${CLAUDE_SKILL_FOLDERS[@]}"; do
+    [ "$1" = "$n" ] && return 0
+  done
+  return 1
+}
 
 is_non_entry() {
   case "$1" in
     README.md|CLAUDE.md|overview.md|STATUS.md|Context.md) return 0 ;;
     transcript.md|spec.md|brainstorm.md|CHECKPOINT.md|BEDTIME.md) return 0 ;;
+    SKILL.md|codex-prompt.md|claude-command.md) return 0 ;;
     *-spec.md|*-prompt.md) return 0 ;;
   esac
   return 1
+}
+
+frontmatter_name() {
+  awk '/^name:[[:space:]]*/ {
+    sub(/^name:[[:space:]]*/, "");
+    sub(/[[:space:]]+$/, "");
+    print;
+    exit
+  }' "$1"
 }
 
 linked=0
 unchanged=0
 skipped=0
 
-# 1. Skills -> slash commands
-for dir in "${REPO_DIR}/claude-skills"/*/; do
+# 1. Shared skills -> slash commands
+for dir in "${SKILLS_DIR}"/*/; do
   [ -d "$dir" ] || continue
   dir="${dir%/}"  # strip trailing slash for clean path output
   name="$(basename "$dir")"
 
+  if is_claude_skill_folder "$name"; then
+    continue  # handled by the Claude-skills section below
+  fi
+
   entry=""
   slash=""
 
-  if [ -f "$dir/SKILL.md" ]; then
-    slash="$(awk '/^name:[[:space:]]*/ {
-      sub(/^name:[[:space:]]*/, "");
-      sub(/[[:space:]]+$/, "");
-      print;
-      exit
-    }' "$dir/SKILL.md")"
-    if [ -z "$slash" ]; then
-      echo "warn: $name/SKILL.md has no 'name:' frontmatter — skipping" >&2
-      skipped=$((skipped + 1))
-      continue
-    fi
-    entry="$dir/SKILL.md"
+  if [ -f "$dir/claude-command.md" ]; then
+    entry="$dir/claude-command.md"
+    slash="$(frontmatter_name "$entry")"
+    [ -n "$slash" ] || slash="$name"
   else
     candidates=()
     while IFS= read -r f; do
@@ -76,7 +104,10 @@ for dir in "${REPO_DIR}/claude-skills"/*/; do
 
     case "${#candidates[@]}" in
       0)
-        echo "warn: $name has no entry .md (only design docs / READMEs) — skipping" >&2
+        if [ -f "$dir/SKILL.md" ] || [ -f "$dir/codex-prompt.md" ]; then
+          continue
+        fi
+        echo "warn: $name has no Claude command entry .md — skipping" >&2
         skipped=$((skipped + 1))
         continue
         ;;
@@ -109,10 +140,33 @@ for dir in "${REPO_DIR}/claude-skills"/*/; do
   linked=$((linked + 1))
 done
 
-# 2. Named file mappings
+# 2. Claude skill folders -> ~/.claude/skills/<name>
+for name in "${CLAUDE_SKILL_FOLDERS[@]}"; do
+  src="${SKILLS_DIR}/${name}"
+  if [ ! -f "${src}/SKILL.md" ]; then
+    echo "warn: ${name} listed in CLAUDE_SKILL_FOLDERS but has no SKILL.md — skipping" >&2
+    skipped=$((skipped + 1))
+    continue
+  fi
+  dst="${CLAUDE_DIR}/skills/${name}"
+  if [ -e "$dst" ] && [ ! -L "$dst" ]; then
+    echo "skip (real file/dir at $dst — not overwriting)" >&2
+    skipped=$((skipped + 1))
+    continue
+  fi
+  if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+    unchanged=$((unchanged + 1))
+    continue
+  fi
+  ln -sfn "$src" "$dst"
+  echo "linked: $dst -> $src"
+  linked=$((linked + 1))
+done
+
+# 3. Named file mappings
 # Format: "<repo-relative source>:<absolute destination>"
 NAMED_FILES=(
-  "global/CLAUDE.md:${CLAUDE_DIR}/CLAUDE.md"
+  "agent-rules/CLAUDE.md:${CLAUDE_DIR}/CLAUDE.md"
 )
 
 for pair in "${NAMED_FILES[@]}"; do
@@ -138,8 +192,8 @@ for pair in "${NAMED_FILES[@]}"; do
   linked=$((linked + 1))
 done
 
-# 3. ~/bin/ui-verify
-ui_verify="${REPO_DIR}/claude-skills/myverify-ui/ui-verify"
+# 4. ~/bin/ui-verify
+ui_verify="${SKILLS_DIR}/myverify-ui/ui-verify"
 if [ -f "$ui_verify" ]; then
   mkdir -p "${HOME}/bin"
   bin_dst="${HOME}/bin/ui-verify"

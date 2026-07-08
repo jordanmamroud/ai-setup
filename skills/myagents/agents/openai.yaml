@@ -1,0 +1,7 @@
+interface:
+  display_name: "myagents"
+  short_description: "Promote global Codex rules into agent-rules/AGENTS.md"
+  default_prompt: "Use $myagents to add this as a polished global Codex rule:"
+
+policy:
+  allow_implicit_invocation: false

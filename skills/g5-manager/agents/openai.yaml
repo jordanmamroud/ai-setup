@@ -1,0 +1,8 @@
+interface:
+  display_name: "G5 Manager"
+  short_description: "Visual audits for Google Cloud projects"
+  brand_color: "#4285F4"
+  default_prompt: "Use $g5-manager to audit my Google Cloud setup and generate a visual dashboard."
+
+policy:
+  allow_implicit_invocation: false

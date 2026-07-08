@@ -1,6 +1,6 @@
 # Codebase Map
 
-*Last refreshed: 2026-05-18*
+*Last refreshed: 2026-07-07*
 
 Grouped by top-level location, in filesystem order.
 
@@ -8,8 +8,8 @@ Grouped by top-level location, in filesystem order.
 
 - `CLAUDE.md` — project instructions for this repo
 - `README.md` — home-directory layout (`~/mylab`, aliases, auto-memory)
-- `claude-link-commands.sh` — links `claude-skills/` into `~/.claude/` (flow in `how-it-works.md`)
-- `codex-link-commands.sh` — links `codex-skills/` into `~/.codex/` (sibling installer)
+- `claude-link-commands.sh` — links Claude command entries from `skills/` into `~/.claude/` (flow in `how-it-works.md`)
+- `codex-link-commands.sh` — links Codex prompt and packaged skill entries from `skills/` into `~/.codex/` (sibling installer)
 
 ## raycast/ — Raycast script commands
 
@@ -17,37 +17,42 @@ Grouped by top-level location, in filesystem order.
 - `regenerate-project-picker.sh` — rebuild the project-picker list
 - `new_evernote.applescript` — create a new Evernote note
 
-## global/ — Global agent rules
+## agent-rules/ — Agent rules
 
-- `CLAUDE.md` — Claude Code global rules (→ `~/.claude/CLAUDE.md`)
-- `AGENTS.md` — Codex global rules (→ `~/.codex/AGENTS.md`)
+- `CLAUDE.md` — Claude Code agent rules (→ `~/.claude/CLAUDE.md`)
+- `AGENTS.md` — Codex agent rules (→ `~/.codex/AGENTS.md`)
 
-## claude-skills/ — Claude skills folder. symlinked too
+## skills/ — global Claude/Codex skill source
 
+- `g5-manager/` — read-only audit of the personal Google Cloud setup (Codex-only)
+- `jm-doc/` — project-doc router: `checkpoint` / `spec` / `readme` / `arc` modes behind one `/jm-doc` command (replaces the retired `mydoc-*` family)
 - `jm-transcript/` — append session to a project's `transcript.md`
-- `mybedtime/` — write `BEDTIME.md` to resume a fresh session
-- `myclaude/` — promote polished global Claude rules into `global/CLAUDE.md`
-- `mydoc-checkpoint/` — capture in-flight work into `overview/notes.md`
-- `mydoc-overview/` — create/sync the `overview/` folder (this skill)
-- `mydoc-spec/` — guided interview to create a versioned `spec-vN.md`
-- `myinit/` — initialize a project with the standard layout
-- `myloop/` — run 5 rule variants through Codex CLI, report the best
+- `myagents/` — promote polished Codex agent rules into `agent-rules/AGENTS.md` (Codex-only)
+- `myclaude/` — promote polished Claude agent rules into `agent-rules/CLAUDE.md`
 - `myopen/` — open a file in TextEdit (defaults to in-focus file)
 - `myport/` — open the localhost dev server in Safari
-- `mytodo/` — capture a quick item to the mygeorge `todos.md` Inbox
 - `myverify-innerloop/` — self-verification hooks for a TS/React project
 - `myverify-ui/` — verify a just-built UI feature via `ui-verify`
-- `mywriter/` — rewrite text per the external `jm-writer` rules
 
-## codex-skills/ — Codex prompt and skill copies
+## km-skills/ — Kitchen Magic workspace skills
 
-- `mydoc-overview.md` · `mydoc-checkpoint.md` · `mydoc-spec.md` — flat Codex prompts installed by `codex-link-commands.sh`
-- `myagents.md` — flat prompt for promoting polished global rules into `global/AGENTS.md`
-- `mydoc-overview/` · `mydoc-checkpoint/` · `mydoc-spec/` · `myagents/` — packaged skill-form copies (`SKILL.md`, `references/`, `agents/`)
+Client-scoped skills staged here until they move to a dedicated workspace.
+
+- `jm-hubspotlps/` — HubSpot CMS landing-page workflows for the Kitchen Magic theme
+- `km-landing-page-audit/` — visitor-perspective QA audit of live Kitchen Magic landing pages
+- `km-video-cataloger/` · `km-video-clipper/` — Kitchen Magic video asset skills (Codex-only)
+
+Installed via hand-set symlinks in `~/.codex/skills/` — `codex-link-commands.sh` does not scan this folder yet.
+
+## archive/ — legacy migration copies and retired skills
+
+- `archive/skills/` — retired skills, moved here folder-intact so they can be revived with a single `mv` (includes the superseded `mydoc-*` family, `mybedtime`, `myinit`, `myloop`, `mytodo`, `mywriter`, `jm-harden`).
+- `archive/claude-skills/` and `archive/codex-skills/` are kept temporarily as rollback sources while the shared `skills/` layout proves out.
+- Do not edit these first; edit `skills/<name>/` and rerun the relevant link script.
 
 ## terminal/ — shell setup
 
-- `zshrc` — tracked backup of `~/.zshrc` (synced by `zsync`)
+- `zshrc` — redacted tracked backup of `~/.zshrc` (synced by `zsync`)
 - `shortcuts/` — global PATH scripts (`mycmds` lists them)
 - `ghostty/` — Ghostty terminal config
 

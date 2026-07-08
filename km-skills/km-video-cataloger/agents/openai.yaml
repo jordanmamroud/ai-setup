@@ -1,0 +1,4 @@
+interface:
+  display_name: "KM Video Cataloger"
+  short_description: "Get or create KM video catalogs"
+  default_prompt: "Use $km-video-cataloger to get an existing Kitchen Magic video transcript or create analysis__catalog.md if it is missing."

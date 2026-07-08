@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
-# codex-link-commands.sh — install ai-setup Codex skills + named files into ~/.codex/.
+# codex-link-commands.sh — install ai-setup Codex prompts, skills, and named files into ~/.codex/.
 #
-# Sibling of claude-link-commands.sh. The Claude installer links per-folder
-# skills from claude-skills/ into ~/.claude/commands/. This one links Codex
-# prompts and packaged skills from codex-skills/ into ~/.codex/.
+# Sibling of claude-link-commands.sh. Both installers now read from shared
+# skills/; legacy split-folder copies live under archive/ only for rollback.
 #
 # Three things this does:
 #
-# 1. Each codex-skills/<name>.md becomes a Codex prompt at
+# 1. Each skills/<name>/codex-prompt.md becomes a Codex prompt at
 #    ~/.codex/prompts/<name>.md (invoked as /<name> in Codex). Codex prompts
 #    carry no frontmatter — the file is the prompt body verbatim.
 #
-# 2. Each codex-skills/<name>/ folder with SKILL.md becomes a Codex skill at
+# 2. Each skills/<name>/ folder with SKILL.md becomes a Codex skill at
 #    ~/.codex/skills/<name>.
 #
 # 3. Named file mappings:
-#    global/AGENTS.md -> ~/.codex/AGENTS.md   (Codex global instructions; the
-#    analog of global/CLAUDE.md -> ~/.claude/CLAUDE.md in the Claude installer)
+#    agent-rules/AGENTS.md -> ~/.codex/AGENTS.md   (Codex global instructions; the
+#    analog of agent-rules/CLAUDE.md -> ~/.claude/CLAUDE.md in the Claude installer)
 #
 # Idempotent. Uses `ln -sfn` so dangling or stale symlinks get refreshed.
 # Will not overwrite a real (non-symlink, non-empty) file at the destination;
@@ -24,8 +23,9 @@
 
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && /bin/pwd -P)"
 CODEX_DIR="${HOME}/.codex"
+SKILLS_DIR="${REPO_DIR}/skills"
 
 mkdir -p "${CODEX_DIR}/prompts" "${CODEX_DIR}/skills"
 
@@ -33,10 +33,10 @@ linked=0
 unchanged=0
 skipped=0
 
-# 1. codex-skills/*.md -> Codex prompts
-for src in "${REPO_DIR}/codex-skills"/*.md; do
+# 1. skills/*/codex-prompt.md -> Codex prompts
+for src in "${SKILLS_DIR}"/*/codex-prompt.md; do
   [ -f "$src" ] || continue
-  name="$(basename "${src%.md}")"
+  name="$(basename "$(dirname "$src")")"
   dst="${CODEX_DIR}/prompts/${name}.md"
 
   if [ -e "$dst" ] && [ ! -L "$dst" ]; then
@@ -53,8 +53,8 @@ for src in "${REPO_DIR}/codex-skills"/*.md; do
   linked=$((linked + 1))
 done
 
-# 2. codex-skills/*/ -> Codex skills
-for src in "${REPO_DIR}/codex-skills"/*/; do
+# 2. skills/*/ -> Codex skills
+for src in "${SKILLS_DIR}"/*/; do
   [ -d "$src" ] || continue
   src="${src%/}"
   [ -f "${src}/SKILL.md" ] || continue
@@ -78,7 +78,7 @@ done
 # 3. Named file mappings
 # Format: "<repo-relative source>:<absolute destination>"
 NAMED_FILES=(
-  "global/AGENTS.md:${CODEX_DIR}/AGENTS.md"
+  "agent-rules/AGENTS.md:${CODEX_DIR}/AGENTS.md"
 )
 
 for pair in "${NAMED_FILES[@]}"; do

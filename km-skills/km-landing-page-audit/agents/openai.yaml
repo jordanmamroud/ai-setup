@@ -1,0 +1,4 @@
+interface:
+  display_name: "KM Landing Page Audit"
+  short_description: "Audit Kitchen Magic landing pages"
+  default_prompt: "Use $km-landing-page-audit to audit these Kitchen Magic landing pages for user-visible content, form, phone, offer, and messaging issues."

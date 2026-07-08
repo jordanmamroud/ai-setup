@@ -1,0 +1,19 @@
+# Repo README: gsd-core / docs/pt-BR/superpowers/README.md
+
+- Source repo: `gsd-core`
+- Source path: `docs/pt-BR/superpowers/README.md`
+- Original file: `/Users/jordanmamroud/mylab/repos-study/gsd-core/docs/pt-BR/superpowers/README.md`
+
+## Original README
+
+# Superpowers (pt-BR)
+
+Documentos avançados traduzidos:
+
+## Plans
+
+- [2026-03-23-materialize-new-project-config](plans/2026-03-23-materialize-new-project-config.md)
+
+## Specs
+
+- [2026-03-20-multi-project-workspaces-design](specs/2026-03-20-multi-project-workspaces-design.md)

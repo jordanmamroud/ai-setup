@@ -1,0 +1,65 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/jordanmamroud/mylab/ai-setup/hooks/pre_tool_use_bash_guard.py",
+            "timeout": 10,
+            "statusMessage": "Checking shell command safety"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/jordanmamroud/mylab/ai-setup/hooks/pre_tool_use_protected_files.py",
+            "timeout": 10,
+            "statusMessage": "Checking protected files"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/jordanmamroud/mylab/ai-setup/hooks/user_prompt_secret_scan.py",
+            "timeout": 5,
+            "statusMessage": "Scanning prompt for secrets"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/jordanmamroud/mylab/ai-setup/hooks/post_tool_use_changed_file_checks.py",
+            "timeout": 120,
+            "statusMessage": "Running focused checks"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/jordanmamroud/mylab/ai-setup/hooks/stop_changed_tree_checks.py",
+            "timeout": 300,
+            "statusMessage": "Running final changed-tree checks"
+          }
+        ]
+      }
+    ]
+  }
+}

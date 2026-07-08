@@ -42,7 +42,7 @@ alias file — `m` figures it out from the canonical name.
 - `ccd [args]` — launch Claude Code with permission checks skipped; intended for `m ccd`
 - `openfolder [path]` — open the current directory (or given path) in a new VS Code window
 - `zopen` — open `~/.zshrc` in TextEdit (the top of that file has the quick-reference cheat sheet)
-- `zsync ["message"]` — copy live `~/.zshrc` → `ai-setup/terminal/zshrc` backup, then commit and push
+- `zsync ["message"]` — copy live `~/.zshrc` → `ai-setup/terminal/zshrc` backup with API keys redacted, then commit and push
 - `vopen [repo-name]` — open VS Code; with a repo name, opens that folder inside `~/mylab/main`
 - `gp "message"` — stage all changes, commit, and push (skips empty commits, refuses outside a repo)
 - `gpa "message"` — `git add . && commit && push` (one-liner, no safety checks)

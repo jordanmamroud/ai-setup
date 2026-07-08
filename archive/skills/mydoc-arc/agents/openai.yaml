@@ -1,0 +1,7 @@
+interface:
+  display_name: "mydoc-arc"
+  short_description: "Create or refresh root ARCHITECTURE.md"
+  default_prompt: "Use $mydoc-arc to create or refresh this project root ARCHITECTURE.md."
+
+policy:
+  allow_implicit_invocation: false

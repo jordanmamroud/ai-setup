@@ -1,0 +1,4 @@
+interface:
+  display_name: "KM Video Clipper"
+  short_description: "Select and trim raw KM video clips"
+  default_prompt: "Use $km-video-clipper to find the best raw clip options from a Kitchen Magic video."

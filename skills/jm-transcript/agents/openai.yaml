@@ -1,0 +1,7 @@
+interface:
+  display_name: "JM Transcript"
+  short_description: "Append active Codex session transcript"
+  default_prompt: "Use $jm-transcript to append this Codex session to transcript.md."
+
+policy:
+  allow_implicit_invocation: false

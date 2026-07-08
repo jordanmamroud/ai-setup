@@ -1,6 +1,11 @@
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/mylab/ai-setup/terminal/shortcuts:$PATH"
 
+# Shared AI provider API keys.
+export GEMINI_API_KEY=REDACTED
+# export OPENAI_API_KEY=REDACTED
+export OPENROUTER_API_KEY=REDACTED
+
 
 # ========================================
 # ZSHRC QUICK REFERENCE (in my GitHub too.)
@@ -22,6 +27,8 @@ export PATH="$HOME/mylab/ai-setup/terminal/shortcuts:$PATH"
 #   !m <name> [args]                 - fuzzy-match a shortcut in terminal/shortcuts/ and run it
 #   !m                               - interactive picker (uses fzf if installed)
 #   mycmds                           - list all available shortcuts
+#   Z                                - open ~/.zshrc in TextEdit
+#   ZR                               - reload ~/.zshrc into the current shell
 #
 #
 #
@@ -55,6 +62,10 @@ alias chub='cd ~/mylab/main && claude'
 # Reloads ~/.zshrc into the current shell. Must be a function/alias (not a
 # script) because `source` only affects the shell that runs it.
 alias refresh='source ~/.zshrc && echo "↻ zshrc reloaded"'
+
+# Fast zshrc helpers.
+alias Z='zopen'
+alias ZR='source ~/.zshrc && echo "↻ zshrc reloaded"'
 
 
 # Wraps the `clone` script (in terminal/shortcuts) so the shell cds into

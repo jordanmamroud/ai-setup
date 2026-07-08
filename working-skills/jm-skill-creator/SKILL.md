@@ -45,7 +45,7 @@ Start by understanding the user's intent. The current conversation might already
 2. When should this skill trigger? (what user phrases/contexts)
 3. What's the expected output format?
 4. What are a few realistic test prompts we can use to try it out?
-5. How will the user judge the results? Ask directly — "when you look at an output, what will make you say it's good or bad?" — and save their answer, close to verbatim, to `evals/criteria.md`. This file is the source of truth for evaluation: when you skim results and propose improvements, judge against what's in it, and leave everything else to the user's own eyes in the viewer. Never grade against criteria the user didn't give you.
+5. How will the user judge the results? Ask directly — "when you look at an output, what will make you say it's good or bad?" — and save their answer, close to verbatim, to `evals/criteria.md`. This file is the source of truth for evaluation, and it isn't write-once: it grows over the skill's life as iteration feedback reveals durable judging principles (see Step 5 of the eval workflow). When you skim results and propose improvements, judge against what's in it, and leave everything else to the user's own eyes in the viewer. Never grade against criteria the user didn't give you or didn't approve.
 
 ### Interview and Research
 
@@ -169,6 +169,8 @@ When user feedback keeps pointing at the same step across iterations, suggest ca
 
 This section is one continuous sequence — don't stop partway through. There are two sanctioned pause points where you wait on the user: their review in the viewer (Step 4), and their OK on your proposed changes (Step 5). Everything else runs without stopping. Do NOT use `/skill-test` or any other testing skill.
 
+One ordering rule shapes the whole sequence: the viewer reaches the user before you form your own opinions about how to improve the skill. That's why the Step 3 skim is about *transcript friction* — how the run went, not how good the outputs are — and the viewer launch follows immediately in Step 4. If you evaluate the outputs yourself first, you anchor on your own read of them, and every improvement you then propose is biased toward your taste instead of the user's — which is exactly what this workflow exists to prevent.
+
 Put results in `<skill-name>-workspace/` as a sibling to the skill directory. Within the workspace, organize results by iteration (`iteration-1/`, `iteration-2/`, etc.) and within that, each test case gets a directory. Don't create all of this upfront — just create directories as you go.
 
 ### Terms used in this workflow
@@ -225,7 +227,7 @@ Write an `eval_metadata.json` for each test case — the viewer reads it to show
 
 **Optional baseline**: on the first iteration of a brand-new skill, offer to also run each prompt *without* the skill (same prompt, no skill path, save to `without_skill/outputs/`) so the user can see whether the skill is helping at all. That's the one moment the question is genuinely open. After that, skip baselines unless the user asks for the comparison — they double the runs for information the user usually doesn't need.
 
-While the runs are in progress, check `evals/criteria.md`. If it doesn't exist yet (common when the user arrived with an existing skill and skipped intent capture), ask the judging-criteria question now — "when you look at an output, what will make you say it's good or bad?" — and save their answer. Also give the user a quick heads-up about what they'll see in the viewer.
+While the runs are in progress, check `evals/criteria.md`. If it doesn't exist yet (common when the user arrived with an existing skill and skipped intent capture), ask the judging-criteria question now — "when you look at an output, what will make you say it's good or bad?" — and save their answer. If it does exist, re-read it rather than relying on memory of it: the file accumulates distilled principles across iterations (Step 5), so it's often richer than whatever was captured at intent time. Also give the user a quick heads-up about what they'll see in the viewer.
 
 ### Step 2: As runs complete, note anything odd
 
@@ -283,6 +285,8 @@ Empty feedback means the user thought it was fine. Focus your improvements on th
 
 Then — before touching the skill — show the user a short change plan: for each change, what feedback (or friction observation) it responds to, what you'll edit in the skill, and why you think it'll help. A few bullets per change, not a spec. Wait for their OK, then apply. This checkpoint exists so the user can veto a fiddly, overfit patch before it lands, and so the two of you stay agreed on what the skill is becoming.
 
+While drafting that plan, also look at each piece of feedback and ask: is this a fix for this one run, or a durable judging principle the user would apply to any future output? "The chart is missing axis labels" is a fix; "never invent numbers that aren't in the source data" is a principle. For each principle, propose an addition to `evals/criteria.md` as part of the same change plan. Format each proposed entry with the user's words quoted near-verbatim, the date, and a pointer to the feedback it came from (iteration + eval, e.g. `iteration-2/eval-negatives`). Riding in the change plan means the user can veto an over-generalized distillation before it lands — and that gate is load-bearing: never grade against a criteria.md entry the user didn't approve. Two invariants keep this honest: the per-iteration `feedback.json` files stay verbatim and append-only (they are the raw record — never edit or prune them), and criteria.md is derived from them — you must always be able to rebuild it from the feedback files alone.
+
 Kill the viewer server when you're done with it:
 
 ```bash
@@ -311,7 +315,7 @@ This task is pretty important (we are trying to create billions a year in econom
 
 After the user OKs your change plan:
 
-1. Apply the changes to the skill
+1. Apply the changes to the skill (including any approved additions to `evals/criteria.md`)
 2. Rerun all test cases into a new `iteration-<N+1>/` directory (bump `current_iteration` in `state.json`)
 3. Skim the new transcripts for friction
 4. Launch the viewer with `--previous-workspace` pointing at the previous iteration
@@ -327,76 +331,7 @@ Keep going until:
 
 ## Description Optimization
 
-The description field in SKILL.md frontmatter is the primary mechanism that determines whether Claude invokes a skill. After creating or improving a skill, offer to optimize the description for better triggering accuracy.
-
-### Step 1: Generate trigger eval queries
-
-Create 20 eval queries — a mix of should-trigger and should-not-trigger. Save as JSON:
-
-```json
-[
-  {"query": "the user prompt", "should_trigger": true},
-  {"query": "another prompt", "should_trigger": false}
-]
-```
-
-The queries must be realistic and something a Claude Code or Claude.ai user would actually type. Not abstract requests, but requests that are concrete and specific and have a good amount of detail. For instance, file paths, personal context about the user's job or situation, column names and values, company names, URLs. A little bit of backstory. Some might be in lowercase or contain abbreviations or typos or casual speech. Use a mix of different lengths, and focus on edge cases rather than making them clear-cut (the user will get a chance to sign off on them).
-
-Bad: `"Format this data"`, `"Extract text from PDF"`, `"Create a chart"`
-
-Good: `"ok so my boss just sent me this xlsx file (its in my downloads, called something like 'Q4 sales final FINAL v2.xlsx') and she wants me to add a column that shows the profit margin as a percentage. The revenue is in column C and costs are in column D i think"`
-
-For the **should-trigger** queries (8-10), think about coverage. You want different phrasings of the same intent — some formal, some casual. Include cases where the user doesn't explicitly name the skill or file type but clearly needs it. Throw in some uncommon use cases and cases where this skill competes with another but should win.
-
-For the **should-not-trigger** queries (8-10), the most valuable ones are the near-misses — queries that share keywords or concepts with the skill but actually need something different. Think adjacent domains, ambiguous phrasing where a naive keyword match would trigger but shouldn't, and cases where the query touches on something the skill does but in a context where another tool is more appropriate.
-
-The key thing to avoid: don't make should-not-trigger queries obviously irrelevant. "Write a fibonacci function" as a negative test for a PDF skill is too easy — it doesn't test anything. The negative cases should be genuinely tricky.
-
-### Step 2: Review with user
-
-Present the eval set to the user for review using the HTML template:
-
-1. Read the template from `assets/eval_review.html`
-2. Replace the placeholders:
-   - `__EVAL_DATA_PLACEHOLDER__` → the JSON array of eval items (no quotes around it — it's a JS variable assignment)
-   - `__SKILL_NAME_PLACEHOLDER__` → the skill's name
-   - `__SKILL_DESCRIPTION_PLACEHOLDER__` → the skill's current description
-3. Write to a temp file (e.g., `/tmp/eval_review_<skill-name>.html`) and open it: `open /tmp/eval_review_<skill-name>.html`
-4. The user can edit queries, toggle should-trigger, add/remove entries, then click "Export Eval Set"
-5. The file downloads to `~/Downloads/eval_set.json` — check the Downloads folder for the most recent version in case there are multiple (e.g., `eval_set (1).json`)
-
-This step matters — bad eval queries lead to bad descriptions.
-
-### Step 3: Run the optimization loop
-
-Tell the user: "This will take some time — I'll run the optimization loop in the background and check on it periodically."
-
-Save the eval set to the workspace, then run in the background:
-
-```bash
-python -m scripts.run_loop \
-  --eval-set <path-to-trigger-eval.json> \
-  --skill-path <path-to-skill> \
-  --model <model-id-powering-this-session> \
-  --max-iterations 5 \
-  --verbose
-```
-
-Use the model ID from your system prompt (the one powering the current session) so the triggering test matches what the user actually experiences.
-
-While it runs, periodically tail the output to give the user updates on which iteration it's on and what the scores look like.
-
-This handles the full optimization loop automatically. It splits the eval set into 60% train and 40% held-out test, evaluates the current description (running each query 3 times to get a reliable trigger rate), then calls Claude to propose improvements based on what failed. It re-evaluates each new description on both train and test, iterating up to 5 times. When it's done, it opens an HTML report in the browser showing the results per iteration and returns JSON with `best_description` — selected by test score rather than train score to avoid overfitting.
-
-### How skill triggering works
-
-Understanding the triggering mechanism helps design better eval queries. Skills appear in Claude's `available_skills` list with their name + description, and Claude decides whether to consult a skill based on that description. The important thing to know is that Claude only consults skills for tasks it can't easily handle on its own — simple, one-step queries like "read this PDF" may not trigger a skill even if the description matches perfectly, because Claude can handle them directly with basic tools. Complex, multi-step, or specialized queries reliably trigger skills when the description matches.
-
-This means your eval queries should be substantive enough that Claude would actually benefit from consulting a skill. Simple queries like "read file X" are poor test cases — they won't trigger skills regardless of description quality.
-
-### Step 4: Apply the result
-
-Take `best_description` from the JSON output and update the skill's SKILL.md frontmatter. Show the user before/after and report the scores.
+The description field in SKILL.md frontmatter is the primary mechanism that determines whether Claude invokes a skill. After the skill is in good shape and the user agrees it's done, offer to optimize the description for better triggering accuracy — the full procedure (generating trigger eval queries, reviewing them with the user, running the background optimization loop, applying `best_description`) is in `references/description-optimization.md`. Read that file when you're about to run the optimization, not before.
 
 ---
 
@@ -412,38 +347,9 @@ After packaging, direct the user to the resulting `.skill` file path so they can
 
 ---
 
-## Claude.ai-specific instructions
+## Other environments
 
-In Claude.ai, the core workflow is the same (draft → test → review → improve → repeat), but because Claude.ai doesn't have subagents, some mechanics change. Here's what to adapt:
-
-**Running test cases**: No subagents means no parallel execution. For each test case, read the skill's SKILL.md, then follow its instructions to accomplish the test prompt yourself. Do them one at a time. This is less rigorous than independent subagents (you wrote the skill and you're also running it, so you have full context), but it's a useful sanity check — and the human review step compensates.
-
-**Reviewing results**: If you can't open a browser (e.g., Claude.ai's VM has no display, or you're on a remote server), skip the browser reviewer entirely. Instead, present results directly in the conversation. For each test case, show the prompt and the output. If the output is a file the user needs to see (like a .docx or .xlsx), save it to the filesystem and tell them where it is so they can download and inspect it. Ask for feedback inline: "How does this look? Anything you'd change?"
-
-**The iteration loop**: Same as before — propose changes, get the OK, improve the skill, rerun the test cases, ask for feedback — just without the browser reviewer in the middle. You can still organize results into iteration directories on the filesystem if you have one.
-
-**Description optimization**: This section requires the `claude` CLI tool (specifically `claude -p`) which is only available in Claude Code. Skip it if you're on Claude.ai.
-
-**Packaging**: The `package_skill.py` script works anywhere with Python and a filesystem. On Claude.ai, you can run it and the user can download the resulting `.skill` file.
-
-**Updating an existing skill**: The user might be asking you to update an existing skill, not create a new one. In this case:
-- **Preserve the original name.** Note the skill's directory name and `name` frontmatter field -- use them unchanged. E.g., if the installed skill is `research-helper`, output `research-helper.skill` (not `research-helper-v2`).
-- **Copy to a writeable location before editing.** The installed skill path may be read-only. Copy to `/tmp/skill-name/`, edit there, and package from the copy.
-- **If packaging manually, stage in `/tmp/` first**, then copy to the output directory -- direct writes may fail due to permissions.
-
----
-
-## Cowork-Specific Instructions
-
-If you're in Cowork, the main things to know are:
-
-- You have subagents, so the main workflow (spawn test cases in parallel, etc.) works. (However, if you run into severe problems with timeouts, it's OK to run the test prompts in series rather than parallel.)
-- You don't have a browser or display, so when generating the eval viewer, use `--static <output_path>` to write a standalone HTML file instead of starting a server. Then proffer a link that the user can click to open the HTML in their browser.
-- For whatever reason, the Cowork setup seems to disincline Claude from generating the eval viewer after running the tests, so just to reiterate: whether you're in Cowork or in Claude Code, after running tests, you should always generate the eval viewer for the human to look at examples before revising the skill yourself and trying to make corrections, using `generate_review.py` (not writing your own boutique html code). Sorry in advance but I'm gonna go all caps here: GENERATE THE EVAL VIEWER *BEFORE* evaluating outputs yourself. You want to get them in front of the human ASAP!
-- Feedback works differently: since there's no running server, the viewer's "Submit All Reviews" button will download `feedback.json` as a file. You can then read it from there (you may have to request access first).
-- Packaging works — `package_skill.py` just needs Python and a filesystem.
-- Description optimization (`run_loop.py` / `run_eval.py`) should work in Cowork just fine since it uses `claude -p` via subprocess, not a browser, but please save it until you've fully finished making the skill and the user agrees it's in good shape.
-- **Updating an existing skill**: The user might be asking you to update an existing skill, not create a new one. Follow the update guidance in the claude.ai section above.
+If you're not in Claude Code with a display — Claude.ai, Cowork, a headless or remote machine — read `references/other-environments.md` before running test cases. It covers running tests without subagents, collecting feedback without a running viewer server (`--static` mode), and updating an existing installed skill (preserve the name, copy to a writeable location before editing).
 
 ---
 
@@ -451,12 +357,14 @@ If you're in Cowork, the main things to know are:
 
 The references/ directory has additional documentation:
 - `references/schemas.md` — JSON structures for evals.json, state.json, eval_metadata.json, and feedback.json
+- `references/other-environments.md` — adaptations for Claude.ai and Cowork; read before running test cases outside Claude Code with a display
+- `references/description-optimization.md` — the full description-optimization procedure; read when the skill is done and the user wants better triggering
 
 ---
 
 Repeating one more time the core loop here for emphasis:
 
-- Figure out what the skill is about — including how the user will judge results (save to `evals/criteria.md`)
+- Figure out what the skill is about — including how the user will judge results (save to `evals/criteria.md`, which keeps growing as feedback distills into it)
 - Draft or edit the skill
 - Run test runs (claude-with-access-to-the-skill) on the test prompts
 - Skim the transcripts for friction, then run `eval-viewer/generate_review.py` and collect the user's feedback
