@@ -65,7 +65,7 @@ Two outputs, in order:
 Rules for the fresh-session prompt:
 
 - tell it to read the overview docs for context, with relative path /overview.
-- give concise short summary of where we are for continuity of session  < 200 words.  
+- give concise short summary of where we are for continuity of session  < 200 words.
 - List 2–4 concrete next-step options as A/B/C/D (one line each). These should be specific and actionable, not vague or high-level. They should be the most logical next steps based on the updated notes, not just generic options. The user will pick one to continue with in the new session.
 
 Nothing else after that.

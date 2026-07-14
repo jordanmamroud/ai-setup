@@ -1,23 +1,31 @@
-# Home directory layout
+# ai-setup
 
-How my laptop's home directory is organized for Claude work.
+Version-controlled source of truth for my local Claude Code, Codex, and terminal setup.
 
-## Shell aliases (`~/.zshrc`)
+## What This Repo Owns
 
-These are shell-level helpers. The `cd`/`source` ones can't move to
-`terminal/shortcuts/` because a subshell script can't change the current shell.
+- `agent-rules/` stores global Claude and Codex instructions.
+- `skills/` stores shared global skills, Claude command adapters, and Codex prompt adapters.
+- `km-skills/` stores Kitchen Magic workspace skills until they move to a dedicated workspace.
+- `hooks/` stores optional Codex hook scripts and `hooks.json`; they are inactive unless linked or copied into an active Codex config layer.
+- `terminal/` stores the redacted `~/.zshrc` backup, global shortcut scripts, and terminal config.
+- `raycast/` stores Raycast script commands.
+- `tuning/` stores good/bad response examples for tuning agent behavior.
+- `overview/` stores repo maps, flow notes, and session notes.
 
-- `cq` — `cd ~/mylab/quickies && claude` (fastest, default muscle memory)
-- `cquickie` — same as `cq`, longer form
-- `chub` — `cd ~/mylab/main && claude` (explicit, for serious work)
-- `refresh` — `source ~/.zshrc` (reloads zshrc into the current shell)
-- `Z` — `zopen` (open `~/.zshrc` in TextEdit)
-- `ZR` — `source ~/.zshrc` (reloads zshrc into the current shell)
-- `clone <url>` — wrapper around the `clone` script that also `cd`s into the new repo
+## Shell Setup
 
-Plain `claude` still works for in-place sessions in any folder.
+`terminal/zshrc` is a redacted tracked backup of `~/.zshrc`. The live file owns local-only values such as API keys.
 
-## Shared API keys (`~/.zshrc`)
+Shell-level helpers stay in `~/.zshrc` when they need to affect the current shell:
+
+- `cq` - `cd ~/mylab/quickies && claude`
+- `cquickie` - same as `cq`
+- `chub` - `cd ~/mylab/main && claude`
+- `refresh` - reload `~/.zshrc`
+- `Z` - open `~/.zshrc` through `zopen`
+- `ZR` - reload `~/.zshrc`
+- `clone <url>` - wrapper around the `clone` shortcut that also `cd`s into the new repo
 
 Shared AI provider keys are loaded from the shell environment, with the local
 values owned by `~/.zshrc`:
@@ -34,7 +42,7 @@ directly, and never print/log/request/save the keys.
 `zsync` redacts `*_API_KEY` exports before writing the tracked
 `terminal/zshrc` backup.
 
-## Global command shortcuts
+## Shortcuts
 
 Real shell scripts on `PATH` (work from terminals, Claude `!` prefix, scripts, cron).
 Source of truth: [`terminal/shortcuts/README.md`](terminal/shortcuts/README.md). Run
@@ -51,12 +59,25 @@ rules inside this repo:
 Run `./claude-link-commands.sh` or `./codex-link-commands.sh` after changes to refresh
 symlinks.
 
-Skill sources live in `skills/` (global) and `km-skills/` (Kitchen Magic workspace skills,
-staged here until they move to a dedicated workspace; their `~/.codex/skills/` symlinks are
-hand-set — the link scripts only scan `skills/`). Claude command entries, Codex prompt
-entries, and Codex packaged skill folders are installed from `skills/`; retired skills move
-folder-intact to `archive/skills/`, and old split-folder copies live in
-`archive/claude-skills/` and `archive/codex-skills/` for rollback.
+Skill sources live in `skills/` and `km-skills/`:
+
+- `skills/` is scanned by the link scripts.
+- Claude slash commands come from `claude-command.md` or a single clear entry `.md`.
+- Claude packaged skills are opt-in through `CLAUDE_SKILL_FOLDERS` in `claude-link-commands.sh`.
+- Codex prompts come from `codex-prompt.md`.
+- Codex packaged skills come from every `skills/<name>/SKILL.md`.
+- `km-skills/` is client-scoped and not scanned by the link scripts; its active symlinks are hand-set.
+- Retired skills move folder-intact to `archive/skills/`; old split-layout rollback copies live in `archive/claude-skills/` and `archive/codex-skills/`.
+
+## Optional Codex Hooks
+
+`hooks/hooks.json` wires the hook scripts into Codex, but nothing in `hooks/` is active unless that config is linked or copied into an active Codex config layer.
+
+- `pre_tool_use_bash_guard.py` blocks common destructive shell commands.
+- `pre_tool_use_protected_files.py` blocks edits to env, credential, and key files.
+- `user_prompt_secret_scan.py` blocks prompts that appear to include secrets.
+- `post_tool_use_changed_file_checks.py` runs focused checks after edits.
+- `stop_changed_tree_checks.py` runs final changed-tree checks before Codex stops.
 
 ## Auto-memory
 
@@ -69,21 +90,6 @@ Auto-memory stays active in `~/mylab/quickies/` (it's the navigator — useful t
 
 Pre-rename memory snapshot archived at `~/.claude/archive/github-memory-2026-05-08/`.
 
-## Migration history (2026-05-08)
-
-Layout before today:
-
-- `~/GitHub/` — held both serious projects AND a `quickie/` subfolder
-- `~/GitHub/quickie/` — scratchpad subfolder
-
-Today:
-
-- `~/GitHub/quickie/` → `~/myquickie/` (moved up to be a sibling)
-- `~/GitHub/` → `~/myhub/` → `~/myghub/` (renamed twice; final keeps `g` for "GitHub-ish")
-- Hardcoded path refs in scripts/configs updated
-- Auto-memory disabled at `~/myghub/`; old memory archived
-- Aliases added to `~/.zshrc`
-
 ## Recreating on a new machine
 
 1. `mkdir -p ~/mylab/main ~/mylab/quickies`
@@ -92,6 +98,5 @@ Today:
 4. Add to `~/.zshrc`:
    - The two `PATH` lines: `~/bin` and `~/mylab/ai-setup/terminal/shortcuts`
    - Shared AI provider key exports for `GEMINI_API_KEY`, `OPENAI_API_KEY`, and `OPENROUTER_API_KEY`
-   - The shell aliases from "Shell aliases" above, including `cq`, `Z`, and `ZR`
-5. Copy `~/mylab/main/CLAUDE.md` (auto-memory disable) and `~/mylab/quickies/CLAUDE.md`
-   (navigator scope) from this `ai-setup` repo — both are version-controlled here.
+   - The shell aliases from "Shell Setup" above, including `cq`, `Z`, and `ZR`
+5. Run `./claude-link-commands.sh` and `./codex-link-commands.sh` from this repo.

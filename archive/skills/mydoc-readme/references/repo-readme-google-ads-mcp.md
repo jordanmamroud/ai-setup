@@ -169,7 +169,7 @@ popular clients.
           "httpUrl":"http://localhost:8080/mcp",
           "env": {
             "GOOGLE_PROJECT_ID": "YOUR_PROJECT_ID",
-            "GOOGLE_ADS_DEVELOPER_TOKEN": "YOUR_DEVELOPER_TOKEN"                        
+            "GOOGLE_ADS_DEVELOPER_TOKEN": "YOUR_DEVELOPER_TOKEN"
           }
         }
       }
@@ -302,7 +302,7 @@ Make sure to set the required environment variables:
 - `GOOGLE_ADS_DEVELOPER_TOKEN`: The developer token you want the MCP server to use (see above).
 - `GOOGLE_ADS_MCP_OAUTH_CLIENT_ID`: The OAuth Client ID you want the MCP server to use.
 - `GOOGLE_ADS_MCP_OAUTH_CLIENT_SECRET`: The OAuth Client secret you want the MCP server to use.
-- `GOOGLE_ADS_MCP_BASE_URL`: The base URL where your MCP server is accessible: this will be automatically assigned by Google Cloud Run after your first deployment. You can update the environment variables after deployment. 
+- `GOOGLE_ADS_MCP_BASE_URL`: The base URL where your MCP server is accessible: this will be automatically assigned by Google Cloud Run after your first deployment. You can update the environment variables after deployment.
 - `FASTMCP_HOST`: Set this to `0.0.0.0` to allow FastMCP to accept connections from all IP addresses.
 
 ```shell
@@ -347,7 +347,7 @@ Here are some sample prompts to get you started:
   what customers do I have access to?
   ```
 
-- Ask about campaigns 
+- Ask about campaigns
 
   ```
   How many active campaigns do I have?
@@ -359,7 +359,7 @@ Here are some sample prompts to get you started:
 
 ### Note about Customer ID
 
-Your agent will need and ask for a customer id for most prompts. If you are 
+Your agent will need and ask for a customer id for most prompts. If you are
 moving between multiple customers, including the customer ID in the prompt may
 be simpler.
 

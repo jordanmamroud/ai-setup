@@ -1,9 +1,9 @@
-# E2E Verifier Architecture for Claude Code CLI  
+# E2E Verifier Architecture for Claude Code CLI
 
 **Builder-Verifier Pattern with Deterministic E2E Tests + Dual-Hook Enforcement**
 
-**Version:** 1.0 (May 2026)  
-**Author:** Grok (collaborative spec with user)  
+**Version:** 1.0 (May 2026)
+**Author:** Grok (collaborative spec with user)
 **Goal:** Eliminate the original 25-minute exploratory verification bloat, prevent self-gaming, keep context clean, and enforce that every code change is backed by a passing deterministic E2E test — all without using Claude Code Agent Teams.
 
 ---
@@ -25,15 +25,15 @@
 
 ### How It Works (Concise Flow)
 
-1. **Builder** (main interactive Claude session)  
-   - Makes code changes  
-   - Writes a **deterministic E2E test** (.spec.ts with real `test()` + `expect()` for React/TS, or `test_*.py` for Python)  
-2. **Verifier** (separate non-interactive shell script)  
-   - Runs only the exact test file with Playwright or pytest (~800 ms)  
-   - Returns tiny, clean pass/fail output  
-3. **Dual-Hook Enforcement**  
-   - **PostToolUse** → records what files changed (non-blocking)  
-   - **Stop** → final hard gate: blocks “done” unless a valid passing E2E test exists for the changes  
+1. **Builder** (main interactive Claude session)
+   - Makes code changes
+   - Writes a **deterministic E2E test** (.spec.ts with real `test()` + `expect()` for React/TS, or `test_*.py` for Python)
+2. **Verifier** (separate non-interactive shell script)
+   - Runs only the exact test file with Playwright or pytest (~800 ms)
+   - Returns tiny, clean pass/fail output
+3. **Dual-Hook Enforcement**
+   - **PostToolUse** → records what files changed (non-blocking)
+   - **Stop** → final hard gate: blocks “done” unless a valid passing E2E test exists for the changes
 4. Repeat until Verifier says “✅ All tests passed”
 
 This is **deterministic E2E testing** — not exploratory QA.
@@ -79,11 +79,11 @@ This is **deterministic E2E testing** — not exploratory QA.
 
 **Core Files We Have Already Specified:**
 
-1. **`CLAUDE.md`** (project root) – Persistent builder instructions  
-2. **`.claude/hooks/record-changes.sh`** – PostToolUse recorder (non-blocking)  
-3. **`.claude/hooks/require-e2e-test.sh`** – Stop hook (final gate)  
-4. **`.claude/settings.json`** – Hook configuration  
-5. **`verify-test.sh`** – Non-interactive Verifier script (your original launcher style)  
+1. **`CLAUDE.md`** (project root) – Persistent builder instructions
+2. **`.claude/hooks/record-changes.sh`** – PostToolUse recorder (non-blocking)
+3. **`.claude/hooks/require-e2e-test.sh`** – Stop hook (final gate)
+4. **`.claude/settings.json`** – Hook configuration
+5. **`verify-test.sh`** – Non-interactive Verifier script (your original launcher style)
 6. **Reusable Skill** (`e2e-verifier`) – Provides `/enforce-e2e-test` command
 
 (If you want the Skill files or the exact `verify-test.sh` next, just say “Next” and I’ll give them.)
@@ -92,9 +92,9 @@ This is **deterministic E2E testing** — not exploratory QA.
 
 ## 7. Key Resources (Official & Community)
 
-- Anthropic Claude Code Best Practices → <https://code.claude.com/docs/en/best-practices>  
-- Anthropic Agent Teams & Writer/Reviewer guidance → <https://code.claude.com/docs/en/agent-teams>  
-- Anthropic Engineering Blog on best practices → <https://www.anthropic.com/engineering/claude-code-best-practices>  
+- Anthropic Claude Code Best Practices → <https://code.claude.com/docs/en/best-practices>
+- Anthropic Agent Teams & Writer/Reviewer guidance → <https://code.claude.com/docs/en/agent-teams>
+- Anthropic Engineering Blog on best practices → <https://www.anthropic.com/engineering/claude-code-best-practices>
 
 **GitHub repos showing this exact pattern:**
 
