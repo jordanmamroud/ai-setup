@@ -44,7 +44,7 @@ Client-scoped skills staged here until they move to a dedicated workspace.
 
 - `ad-hook-visuals/` — Kitchen Magic ad-hook visual ideation
 - `jm-hubspotlps/` — HubSpot CMS landing-page workflows for the Kitchen Magic theme
-- `km-ad-library/` — Kitchen Magic ad library reference workflow
+- `km-library/` — Kitchen Magic library reference workflow
 - `km-landing-page-audit/` — visitor-perspective QA audit of live Kitchen Magic landing pages
 - `km-video-cataloger/` · `km-video-clipper/` — Kitchen Magic video asset skills (Codex-only)
 

@@ -1,5 +1,5 @@
 ---
-name: km-ad-library
+name: km-library
 description: >
   Read-only search and navigation for the local Kitchen Magic ad asset library.
   Use this whenever the user asks for ad library assets, Kitchen Magic production
@@ -11,7 +11,7 @@ description: >
   files. Copy assets out of the library before editing.
 ---
 
-# KM Ad Library
+# KM Library
 
 ## Core Rule
 
